@@ -7,7 +7,7 @@
 
         <div class="menu-toggle-wrap">
 			<button class="menu-toggle" @click="ToggleMenu">
-				<span class="material-symbols-outlined">menu</span>
+				<span class="material-icons">menu</span>
 			</button>
 		</div>
 
@@ -90,8 +90,7 @@ aside{
     }
 
     .menu-toggle-wrap {
-		display: flex;
-		justify-content: flex-end;
+		
 		margin-bottom: 1rem;
 
 		position: relative;
@@ -182,13 +181,14 @@ aside{
     &.is-expanded {
 		width: var(--sidebar-width);
 
-		.menu-toggle-wrap {
+		/* .menu-toggle-wrap {
 			top: -3rem;
 			
 			.menu-toggle {
 				transform: rotate(-180deg);
 			}
-		}
+		} */
+
 
 		h3, .button .text {
 			opacity: 1;
