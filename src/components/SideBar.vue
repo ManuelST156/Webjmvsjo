@@ -6,7 +6,7 @@
 		</div>
 
         <div class="menu-toggle-wrap">
-			<button class="menu-toggle" @click="ToggleMenu">
+			<button id="button" class="menu-toggle" @click="ToggleMenu">
 				<span class="material-icons">menu</span>
 			</button>
 		</div>
@@ -26,7 +26,7 @@
 				<span class="material-icons">group</span>
 				<span class="text">Vocalias</span>
 			</router-link>
-			<router-link to="/contact" class="button">
+			<router-link to="/contactanos" class="button">
 				<span class="material-icons">email</span>
 				<span class="text">Contactanos</span>
 			</router-link>
@@ -35,6 +35,12 @@
 		<div class="flex"></div>
 		
 		<div class="menu">
+
+			<router-link to="/iniciarSesion" class="button">
+				<span class="material-icons">login</span>
+				<span class="text">Iniciar Sesion</span>
+			</router-link>
+
 			<router-link to="/ajustes" class="button">
 				<span class="material-icons">settings</span>
 				<span class="text">Ajustes</span>
@@ -68,7 +74,7 @@ aside{
     overflow: hidden;
     padding: 1rem;
 
-    background-color:var(--dark);
+    background-color:var(--superdarkblue);
     color: var(--light);
     transition: 0.2s ease-out;
 
@@ -107,8 +113,8 @@ aside{
 			
 			&:hover {
 				.material-icons {
-					color: var(--primary);
-					transform: translateX(0.5rem);
+					color: var(--lightblue);
+					transform: scale(1.1);
 				}
 			}
 		}
@@ -148,19 +154,20 @@ aside{
 			}
 
 			&:hover {
-				background-color: var(--dark-alt);
+				background-color: var(--superdarkblue);
 
 				.material-icons, .text {
-					color: var(--primary);
+					color: var(--lightblue);
+					transform: scale(1.1);
 				}
 			}
 
 			&.router-link-exact-active {
 				background-color: var(--dark-alt);
-				border-right: 5px solid var(--primary);
+				border-right: 5px solid var(--lightcyan);
 
 				.material-icons, .text {
-					color: var(--primary);
+					color: var(--lightblue);
 				}
 			}
 		}
