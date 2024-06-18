@@ -3,7 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import VacanciesView from '@/views/VacanciesView.vue'
-import LoginRegisterView from '@/views/LoginRegisterView.vue' 
+import LoginView from '@/views/LoginView.vue' 
+import RegisterView from '@/views/RegisterView.vue'
 import ContactView from '@/views/ContactView.vue'
 
 
@@ -33,12 +34,17 @@ const router = createRouter({
     {
       path: '/iniciarSesion',
       name: 'login',
-      component: LoginRegisterView
+      component: LoginView
     },
     {
       path: '/contactanos',
       name: 'contact',
       component: ContactView
+    },
+    {
+      path: '/registrar',
+      name: 'register',
+      component: RegisterView
     }
   ]
 })
