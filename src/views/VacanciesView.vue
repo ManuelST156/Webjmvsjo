@@ -1,78 +1,73 @@
 <template>
-  <main class="mainContainer">
-    <div class="buttonChains">
-      <router-link to="/ajustes" class="circleContainer" >
-				<img  class="circleButton" src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/500_333.jpeg" alt="">
-				<span id="circleSpanButton" class="text">Actividades</span>
-			</router-link>
+  <main>
+    <div>
+      <h1>Vocalias</h1>
 
-      <router-link to="/ajustes" class="circleContainer">
-				<img class="circleButton" src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/500_333.jpeg" alt="">
-				<span id="circleSpanButton" class="text">Comunidades</span>
-			</router-link>
+      <div class="ButtonLine">
+        <Button class="buttonVacancies" label="Aplicar Vocalia" />
+        <Button class="buttonVacancies" label="Conocer Vocalia" />
+      </div>
 
-      <router-link to="/ajustes" class="circleContainer">
-				<img  class="circleButton" src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/500_333.jpeg" alt="">
-				<span id="circleSpanButton" class="text">Vocalias</span>
-			</router-link>
-      
-    
+      <Divider class="Divider" type="solid" />
+
+      <h1>Vocalias Aplicadas</h1>
+      <div class="containerCard">
+        <Card class="Card">
+          <template #content>
+            <p class="m-0">
+              Únete a nuestra comunidad de jóvenes apasionados por el servicio,
+              la oración y el compañerismo. Aquí encontrarás oportunidades para
+              crecer en tu fe, hacer nuevos amigos y contribuir a la
+              transformación de nuestra sociedad a través de acciones concretas
+              y caritativas.
+            </p>
+          </template>
+        </Card>
+
+        <Card class="Card">
+          <template #content>
+            <p class="m-0">
+              Únete a nuestra comunidad de jóvenes apasionados por el servicio,
+              la oración y el compañerismo. Aquí encontrarás oportunidades para
+              crecer en tu fe, hacer nuevos amigos y contribuir a la
+              transformación de nuestra sociedad a través de acciones concretas
+              y caritativas.
+            </p>
+          </template>
+        </Card>
+      </div>
     </div>
-
-
   </main>
 </template>
 
-<script>
-export default {
-
-}
+<script setup>
+import ButtonsChains from "@/components/ButtonsChains.vue";
+import { ref } from "vue";
 </script>
 
-<style>
-
-.buttonChains{
-  display: flex;
-  justify-content: center; 
-  align-items: center;  
-  
+<style scoped>
+.Divider {
+  margin: 15px;
+  margin-bottom: 20px;
+  background-color: var(--darkblue);
+  width: 100%;
+  height: 2px;
 }
 
-.circleContainer{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 150px; 
-  height: 150px; 
-  text-decoration: none;
-  color: inherit;
-  margin: 30px;
-  /* cursor: pointer; */
+.buttonVacancies {
+  margin: 20px;
 }
 
-
-.circleButton{
-  border-radius:50%;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+.Card {
+  width: 400px;
+  height: 200px;
+  margin: 20px;
 }
 
-.circleButton:hover{
-
-  filter: hue-rotate(100%);
-}
-
-#circleSpanButton{
+.containerCard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   padding: 10px;
-  
+  gap: 10px;
 }
-
-
-
-
-
-
-
 </style>
