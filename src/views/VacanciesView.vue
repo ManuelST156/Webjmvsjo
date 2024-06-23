@@ -4,7 +4,11 @@
       <h1>Vocalias</h1>
 
       <div class="ButtonLine">
-        <Button class="buttonVacancies" label="Aplicar Vocalia" />
+        
+        <router-link to="/aplicarVacante">
+          <Button class="buttonVacancies" label="Aplicar Vocalia" />
+        </router-link>
+
         <Button class="buttonVacancies" label="Conocer Vocalia" />
       </div>
 

@@ -6,6 +6,7 @@ import VacanciesView from '@/views/VacanciesView.vue'
 import LoginView from '@/views/LoginView.vue' 
 import RegisterView from '@/views/RegisterView.vue'
 import ContactView from '@/views/ContactView.vue'
+import ApplyVacancyView from '@/views/ApplyVacancyView.vue'
 
 
 const router = createRouter({
@@ -45,6 +46,11 @@ const router = createRouter({
       path: '/registrar',
       name: 'register',
       component: RegisterView
+    },
+    {
+      path:'/aplicarVacante',
+      name: 'applyVacancy',
+      component: ApplyVacancyView
     }
   ]
 })
