@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
-import SettingsView from '@/views/SettingsView.vue'
-import VacanciesView from '@/views/VacanciesView.vue'
-import LoginView from '@/views/LoginView.vue' 
-import RegisterView from '@/views/RegisterView.vue'
-import ContactView from '@/views/ContactView.vue'
-import ApplyVacancyView from '@/views/ApplyVacancyView.vue'
+import HomeView from '@/views/Users/HomeView.vue'
+import AboutView from '@/views/Users/AboutView.vue'
+import SettingsView from '@/views/Users/SettingsView.vue'
+import VacanciesView from '@/views/Users/VacanciesView.vue'
+import LoginView from '@/views/Auth/LoginView.vue' 
+import RegisterView from '@/views/Auth/RegisterView.vue'
+import ContactView from '@/views/Users/ContactView.vue'
+import ApplyVacancyView from '@/views/Users/ApplyVacancyView.vue'
+import LoadingPageView from '@/views/StatusPages/LoadingView.vue'
+import NotFoundView from '@/views/StatusPages/NotFoundView.vue'
 
 
 const router = createRouter({
@@ -51,6 +53,16 @@ const router = createRouter({
       path:'/aplicarVacante',
       name: 'applyVacancy',
       component: ApplyVacancyView
+    },
+    {
+      path:'/cargando',
+      name:'loadingPage',
+      component: LoadingPageView
+    },
+    {
+      path:'/noExiste',
+      name:'notFound',
+      component: NotFoundView
     }
   ]
 })

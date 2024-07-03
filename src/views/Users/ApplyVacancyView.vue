@@ -477,12 +477,22 @@ margin: 30px 0;
 import { ref,onMounted } from "vue";
 import { useToast } from "primevue/usetoast";
 import { ProductService } from '@/services/ProductService';
+import { createClient } from '@supabase/supabase-js'
 
-  const toast = useToast();
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  const onUpload = () => {
-      toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
-  };
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+
+const toast = useToast();
+
+const onUpload = () => {
+    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+};
+
+
+
 
 const username = ref(null);
 const password = ref(null);
@@ -501,8 +511,15 @@ const cities = ref([
 
 const selectedCities = ref();
 
-onMounted(() => {
+onMounted(async () => {
     ProductService.getProductsMini().then((data) => (products.value = data));
+
+    let datos = await supabase
+  .from('Solicitudes')
+  .select('*')
+
+  console.log(datos);
+
 });
 const products = ref();
 </script>

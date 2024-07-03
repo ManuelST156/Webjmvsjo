@@ -5,8 +5,8 @@
 
       <div class="prueba">
         <FloatLabel class="FloatLabel">
-          <InputText class="inputsLogin" id="username" v-model="username" />
-          <label for="username">Nombre de Usuario o Email</label>
+          <InputText class="inputsLogin" id="email" v-model="email" />
+          <label for="email">Correo Electronico</label>
         </FloatLabel>
       </div>
 
@@ -24,7 +24,7 @@
       </div>
 
       <div class="card flex justify-content-center">
-        <Button label="Iniciar Sesion" />
+        <Button label="Iniciar Sesion" @click="login" />
       </div>
 
       <div class="linksLogin">
@@ -91,7 +91,26 @@
 
 <script setup>
 import { ref } from "vue";
+import { createClient } from '@supabase/supabase-js'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const username = ref(null);
+const email = ref(null);
 const password = ref(null);
+
+
+//Funciones
+
+const login= async ()=>{
+  var data = await supabase.auth.signInWithPassword({
+  email: email.value,
+  password: password.value
+})
+
+const userData = await supabase.auth.getUser();
+console.log(userData);
+}
+
+
 </script>
