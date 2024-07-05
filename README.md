@@ -31,17 +31,17 @@ npm run build
 
 ## Resumen de Avances
 
-Pestaña login: 90%
-Pestaña Registro: 100%
-Pestaña Vocalia: 35% :
+    Pestaña login: 90%
+    Pestaña Registro: 100%
+    Pestaña Vocalia: 35% :
 
-    - Diseño Web: 70%
-    - Funcionalidad: 0%
+        - Diseño Web: 70%
+        - Funcionalidad: 0%
 
-Home: 80%
-Setting:0%
-Acercade:0%
-Vocalias Info:0%
+    Home: 80%
+    Setting:0%
+    Acercade:0%
+    Vocalias Info:0%
 
 
 
