@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <main class="LoginRegister">
     <div id="containerRegister" class="card flex justify-content-center">
       <h1 id="Tittle">Registrarse</h1>
@@ -13,7 +14,7 @@
             required="true"
           />
           <label for="name" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? 'Nombres son requeridos' : 'Nombres' }}
+            {{ submitted && !password ? "Nombres son requeridos" : "Nombres" }}
           </label>
         </FloatLabel>
       </div>
@@ -25,10 +26,14 @@
             id="lastname"
             v-model="registerUser.apellidosUsuario"
             required="true"
-            :class="{ 'p-invalid': submitted && !registerUser.apellidosUsuario }"
+            :class="{
+              'p-invalid': submitted && !registerUser.apellidosUsuario,
+            }"
           />
           <label for="lastname" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? 'Apellidos son requerido' : 'Apellidos' }}
+            {{
+              submitted && !password ? "Apellidos son requerido" : "Apellidos"
+            }}
           </label>
         </FloatLabel>
       </div>
@@ -42,11 +47,15 @@
             v-model="registerUser.correoUsuario"
             required="true"
             :class="{ 'p-invalid': submitted && !registerUser.correoUsuario }"
+            icon="mail"
           />
           <label for="email" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? 'Correo Electronico es requerido' : 'Correo Electronico' }}
+            {{
+              submitted && !password
+                ? "Correo Electronico es requerido"
+                : "Correo Electronico"
+            }}
           </label>
-         
         </FloatLabel>
       </div>
 
@@ -60,9 +69,8 @@
             :class="{ 'p-invalid': submitted && !registerUser.telefonoUsuario }"
           />
           <label for="phone" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? 'Telefono es requerido' : 'Telefono' }}
+            {{ submitted && !password ? "Telefono es requerido" : "Telefono" }}
           </label>
-          
         </FloatLabel>
       </div>
 
@@ -82,20 +90,30 @@
         </FloatLabel>
       </div>
 
+
       <div class="block">
         <FloatLabel class="FloatLabel">
-          <InputText class="inputsLogin" id="password" v-model="password"
-          required="true" 
-          :class="{ 'p-invalid': submitted && !password}" />
+          <Password class="inputsLogin" v-model="password" toggleMask :feedback="false"
+          id="password" required="true"
+          :class="{ 'p-invalid': submitted && !password }" />
           <label for="password" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? 'Contraseña es requerido' : 'Contraseña' }}
+            {{
+              submitted && !password ? "Contraseña es requerido" : "Contraseña"
+            }}
           </label>
-          
         </FloatLabel>
       </div>
 
+
       <div class="card flex justify-content-center">
-        <Button type="submit"  class="buttonSend" label="Registrar" @click="UsersRegister" />
+        <Button
+          type="submit"
+          class="buttonSend"
+          label="Registrar"
+          @click="SaveRegister"
+          :loading="loading"
+          
+        />
       </div>
 
       <div class="linksLogin">
@@ -108,6 +126,27 @@
 </template>
 
 <style lang="scss" scoped>
+
+
+::v-deep(.p-component)
+{
+  .p-password-input{
+    height: 40px;
+  width: 100%;
+  }
+  
+  .p-icon.p-input-icon{
+    color: var(--lightgrey);
+  }
+
+   .p-input-icon{
+    top: 30%;
+  }
+}
+
+
+
+
 .LoginRegister {
   background: linear-gradient(200deg, var(--rblight), var(--rblightblue));
   display: flex;
@@ -152,7 +191,7 @@
 }
 
 .linksLogin {
-  margin: 5px;
+  margin: 5px 0;
 }
 
 .FloatLabel {
@@ -160,29 +199,51 @@
 }
 
 .buttonSend {
-  margin: 2px 0;
+  margin: 3px 0;
+  background-color: var(--darkblue);
+}
+
+.buttonSend:hover {
+  background-color: var(--lightcyan);
+}
+
+.buttonSend:active {
+  background-color: var(--darkblue);
 }
 </style>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { createClient } from "@supabase/supabase-js";
-
-
+import { useToast } from "primevue/usetoast";
+import { useRouter } from 'vue-router';
 
 //Variables de Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+//Variables y funciones Toast
+const toast = useToast();
+const onUpload = () => {
+  toast.add({
+    severity: "info",
+    summary: "Success",
+    detail: "File Uploaded",
+    life: 3000,
+  });
+};
+
 //Variables de Datos
 
 const registerUser = ref({});
 const password = ref();
 const communities = ref();
+const router=useRouter();
 
 //Variables de Estados
-const submitted=ref(false);
+const submitted = ref(false);
+const loading=ref(false);
 
 //Mounted
 
@@ -195,65 +256,105 @@ onMounted(async () => {
 
 //Funciones
 
-const UsersRegister = async () => {
-
-  submitted.value=true;
+const SaveRegister = async () => {
+  submitted.value = true;
   
 
-  /* if (!registerUser.value.nombresUsuario || 
-    !registerUser.value.apellidosUsuario || 
-    !registerUser.value.correoUsuario || 
-    !registerUser.value.telefonoUsuario || 
-    password.value==undefined)
-    {
-      alert("ben y:");
-      
-      
-    } */
-    
-
-  /* const checkUser = await supabase
-  .from('Usuarios')
-  .select('correoUsuario')
-  .eq('correoUsuario',registerUser.value.correoUsuario);
-
-  console.log(checkUser.data.length); */
-
-  /* if(checkUser.data.length==1)
+  if (!registerUser.value.nombresUsuario ||
+    !registerUser.value.apellidosUsuario ||
+    !registerUser.value.correoUsuario ||
+    !registerUser.value.telefonoUsuario ||
+    password.value == undefined) 
   {
-    alert("mi hermano, ya esta");
-  } */
-
-  
-
-  /* try {
-    const credentialData = await supabase.auth.signUp({
-      email: registerUser.value.correoUsuario,
-      password: password.value,
+    toast.add({
+      severity: "error",
+      summary: "Debe Completar todos los campos",
+      detail: "Registro No Completado",
+      life: 3000,
     });
 
-    const dataUsers = await supabase.from("usuarioscredenciales").select("*");
+  } else {
+    if (validateEmail(registerUser.value.correoUsuario)) {
+      const checkUser = await supabase
+        .from("Usuarios")
+        .select("correoUsuario")
+        .eq("correoUsuario", registerUser.value.correoUsuario);
 
-    const data = dataUsers.data;
+      if (checkUser.data.length == 0) {
 
-    const usuarioRegistrado = data.find(
-      (user) => user.email == registerUser.value.correoUsuario
-    );
+        try {
+          loading.value=true;
+          const credentialData = await supabase.auth.signUp({
+            email: registerUser.value.correoUsuario,
+            password: password.value,
+          });
 
+          const dataUsers = await supabase
+            .from("usuarioscredenciales")
+            .select("*");
 
-    if (usuarioRegistrado) {
-      registerUser.value.idAuth = usuarioRegistrado.id;
+          const data = dataUsers.data;
 
-      addUser();
-      const { error } = await supabase.auth.signOut();
+          const usuarioRegistrado = data.find(
+            (user) => user.email == registerUser.value.correoUsuario
+          );
 
+          if (usuarioRegistrado) {
+            registerUser.value.idAuth = usuarioRegistrado.id;
+
+            addUser();
+            const { error } = await supabase.auth.signOut();
+
+            toast.add({
+              severity: "success",
+              summary: "Registrado Correctamente",
+              detail: "Registro Completado",
+              life: 3000,
+            });
+
+            loading.value=false;
+            submitted.value=false;
+
+            router.push({ name: 'login' });
+          }
+        } 
+        
+        catch (error) {
+          toast.add({
+              severity: "error",
+              summary: "Error Base de Datos",
+              detail: error,
+              life: 3000,
+            });
+        }
+
+      } 
+      else {
+        toast.add({
+          severity: "error",
+          summary: "Este correo electronico ya existe",
+          detail: "Registro no completado",
+          life: 3000,
+        });
+      }
+    } 
+    
+    else {
+      toast.add({
+        severity: "error",
+        summary: "Escriba una direccion de correo valida",
+        detail: "Registro no completado",
+        life: 3000,
+      });
+     
     }
-  } catch (error) {
-    console.log("Este es el error ", error);
-  } */
+  }
 };
 
-
+const validateEmail = (email) => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+};
 
 const addUser = async () => {
   registerUser.value.idRolUsuario = 2;

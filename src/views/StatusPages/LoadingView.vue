@@ -1,31 +1,66 @@
 <template>
-    <h1>Cargando</h1>
+    <main class="im">
+        <div class="containerLoading">
+            <video autoplay loop muted class="loading">
+             <source src="/src/assets/AnimationJMV.mp4" type="video/mp4" alt="">
+            </video>
+        </div>
+    </main>
 </template>
 
+<style>
+
+
+video{
+    max-width: 100%;
+    max-height: 100%;
+}
+.im{
+    background-color:#FFFFFF ;
+}
+
+.containerLoading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
+</style>
 <script setup>
 
 import { onMounted, ref } from 'vue';
-import { createClient } from '@supabase/supabase-js'
+/* import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(supabaseUrl, supabaseAnonKey); */
 
-onMounted(async()=>{
+onMounted(()=>{
 
+
+    setTimeout(async()=>{
+        /* const token = getParams('token');
+        const email = getParams('email');
+        
     
-    const token = getParams('token');
-    const email = getParams('email');
-    
-  
-    const { data, error } = await supabase.auth.verifyOtp({ token_hash: token, type: 'email'})
-    console.log(token);
-    console.log(email);
+        const { data, error } = await supabase.auth.verifyOtp({ token_hash: token, type: 'email'});
+        console.log(data);
+        console.log(token);
+        console.log(email); */
+
+    },3000);
 
 });
+
+
+
 
 const getParams=(param)=>{
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
+
+
+
 
 </script>

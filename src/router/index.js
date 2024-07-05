@@ -9,6 +9,7 @@ import ContactView from '@/views/Users/ContactView.vue'
 import ApplyVacancyView from '@/views/Users/ApplyVacancyView.vue'
 import LoadingPageView from '@/views/StatusPages/LoadingView.vue'
 import NotFoundView from '@/views/StatusPages/NotFoundView.vue'
+import LoadingConfirmationView from '@/views/StatusPages/LoadingConfirmationView.vue'
 
 
 const router = createRouter({
@@ -63,8 +64,14 @@ const router = createRouter({
       path:'/noExiste',
       name:'notFound',
       component: NotFoundView
+    },
+    {
+      path:'/confirmacion',
+      name: 'confirmationPage',
+      component:LoadingConfirmationView
     }
   ]
 })
 
 export default router
+

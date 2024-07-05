@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <main class="LoginRegister">
     <div id="containerRegister" class="card flex justify-content-center">
       
@@ -7,31 +8,35 @@
       <div class="firstGroup">
         
         <div class="pruebaImg">
-          <div id="imageUpload"></div>
+          <img src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/1366_2000.jpeg" id="imageUpload">
 
         </div>
         
-        <div class="prueba">
-        <Dropdown
-          v-model="selectedCity"
-          editable
-          :options="cities"
-          optionLabel="name"
-          placeholder="Vocalia a Aplicar"
-          class="w-full md:w-32rem"
-          
-        />
-        </div>
+        <div class="block">
+        <FloatLabel class="FloatLabel">
+          <Dropdown
+            v-model="selectedCities"
+            id="vacancy"
+            editable
+            :options="cities"
+            optionLabel="nombreComunidad"
+            optionValue="idComunidad"
+            class="w-full md:w-32rem"
+            required="true"
+          />
+          <label for="vacancy">Selecciona una Vocalia</label>
+        </FloatLabel>
+      </div>
+
         
-        <div class="prueba">
+        <div class="block">
           
           <Toast />
-          <FileUpload id="dropLogin" class="custom-file-upload" mode="basic" name="demo[]" url="/api/upload" accept="image/*" :maxFileSize="1000000" @upload="onUpload" :auto="true" chooseLabel="Browse" />
+          <FileUpload id="dropLogin" class="custom-file-upload" mode="basic"   accept="image/*"  
+          @upload="onUpload" chooseLabel="Sube una Imagen" />
         
         </div>
         
-
-
         
 
 
@@ -41,28 +46,28 @@
 
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText class="inputsLogin" id="username" v-model="username" />
             <label for="username">Nombres</label>
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText class="inputsLogin" id="username" v-model="username" />
             <label for="username">Apellidos</label>
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
               <Calendar v-model="date" id="date" class="inputsLogin" />
               <label for="date">Fecha de Nacimiento</label>
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText type="number"  class="inputsLogin" id="username" v-model="username" />
             <label for="username">Edad</label>
@@ -70,21 +75,21 @@
 
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText class="inputsLogin" id="username" v-model="username" />
             <label for="username">Numero de Telefono</label>
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText class="inputsLogin" id="username" v-model="username" />
             <label for="username">Correo Electronico</label>
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <Dropdown
             v-model="selectedCity"
             editable
@@ -96,7 +101,7 @@
         </div>
         
 
-        <div class="prueba">
+        <div class="block">
           <Dropdown id="dropLogin"
             v-model="selectedCity"
             editable
@@ -108,7 +113,7 @@
         </div>
 
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText class="inputsLogin" id="username" v-model="username" />
             <label for="username">Direccion</label>
@@ -142,21 +147,21 @@
           <Button label="Show" @click="visible = true" />
           <Dialog v-model:visible="visible" modal header="Header" :style="{ width: '50vw', height:'25vw' }" 
           >
-            <div class="prueba">
+            <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Direccion</label>
               </FloatLabel>
             </div>
 
-            <div class="prueba">
+            <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Direccion</label>
               </FloatLabel>
             </div>
 
-            <div class="prueba">
+            <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Direccion</label>
@@ -177,7 +182,7 @@
 
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <Dropdown id="dropLogin"
             v-model="selectedCity"
             editable
@@ -188,21 +193,21 @@
           />
         </div>
 
-        <div class="prueba">
+        <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Horario de Formacion</label>
               </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Nombre del Catequista</label>
               </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <Dropdown id="dropLogin"
               v-model="selectedCity"
@@ -215,14 +220,14 @@
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
               <Calendar v-model="date" id="date" class="inputsLogin" />
               <label for="date">Fecha de Nacimiento</label>
           </FloatLabel>
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText type="number"  class="inputsLogin" id="username" v-model="username" />
             <label for="username">Edad</label>
@@ -236,7 +241,7 @@
 
         </div>
 
-        <div class="prueba">
+        <div class="block">
           <MultiSelect v-model="selectedCities" :options="cities" optionLabel="name" placeholder="Select Cities"
               :maxSelectedLabels="3" class="w-full md:w-32rem" />
         </div>
@@ -267,21 +272,21 @@
           <Button label="Show" @click="visible = true" />
           <Dialog v-model:visible="visible" modal header="Header" :style="{ width: '50vw', height:'25vw' }" 
           >
-            <div class="prueba">
+            <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Direccion</label>
               </FloatLabel>
             </div>
 
-            <div class="prueba">
+            <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Direccion</label>
               </FloatLabel>
             </div>
 
-            <div class="prueba">
+            <div class="block">
                 <FloatLabel class="FloatLabel">
                 <InputText class="inputsLogin" id="username" v-model="username" />
                 <label for="username">Direccion</label>
@@ -337,14 +342,40 @@
 {
    
   .p-button{
-    /* background-color: blue; */
+    background-color: var(--darkblue);
     height: 40px;
     margin-bottom: 4rem;
     width: 35%;
+    border: none;
+  }
+
+  .p-button-label{
+    font-weight: bold;
+  }
+
+  .p-button:hover{
+    background-color: var(--lightcyan);
+  }
+
+  .p-button:active{
+    background-color: var(--darkblue);
   }
     
 
 }
+
+/* .buttonSend {
+  margin: 3px 0;
+  background-color: var(--darkblue);
+}
+
+.buttonSend:hover {
+  background-color: var(--lightcyan);
+}
+
+.buttonSend:active {
+  background-color: var(--darkblue);
+} */
 
 ::v-deep(.p-datatable)
 {
@@ -416,7 +447,7 @@
 
 }
 
-.prueba {
+.block {
   width: 100%;
   height: 60px;
   margin: 10px 0;
@@ -488,7 +519,12 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const toast = useToast();
 
 const onUpload = () => {
-    toast.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+  toast.add({
+    severity: "info",
+    summary: "Success",
+    detail: "File Uploaded",
+    life: 3000,
+  });
 };
 
 

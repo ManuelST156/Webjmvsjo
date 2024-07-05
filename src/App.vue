@@ -21,6 +21,7 @@ import UpBotton from "../src/components/UpBotton.vue";
   --dark-alt: #334155;
   --light: #f1f5f9;
   --sidebar-width: 300px;
+  --lightgrey:#97a5ba;
 
   //JMV colors
   --darkblue: #0330a0;
