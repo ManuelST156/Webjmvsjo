@@ -15,16 +15,20 @@
         <div class="block">
         <FloatLabel class="FloatLabel">
           <Dropdown
-            v-model="selectedCities"
+            v-model="vacancyRequest.idVocalia"
             id="vacancy"
             editable
             :options="cities"
-            optionLabel="nombreComunidad"
-            optionValue="idComunidad"
+            optionLabel="name"
             class="w-full md:w-32rem"
             required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.idVocalia }"
           />
-          <label for="vacancy">Selecciona una Vocalia</label>
+          <label for="vacancy" :class="{ 'p-error': submitted && !vacancyRequest.idVocalia }">
+            {{
+              submitted && !vacancyRequest.idVocalia ? "Vocalia es Requerido" : "Seleccionar Vocalia"
+            }}
+          </label>
         </FloatLabel>
       </div>
 
@@ -48,53 +52,89 @@
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Nombres</label>
+            <InputText class="inputsLogin" id="names" v-model="vacancyRequest.nombresSolicitante" required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.nombresSolicitante }"
+             />
+            <label for="names" :class="{ 'p-error': submitted && !vacancyRequest.nombresSolicitante }">
+            {{
+              submitted && !vacancyRequest.nombresSolicitante ? "Nombres son requeridos" : "Nombres"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Apellidos</label>
+            <InputText class="inputsLogin" id="lastNames" v-model="vacancyRequest.apellidosSolicitante" required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.apellidosSolicitante }"
+             />
+            <label for="lastNames" :class="{ 'p-error': submitted && !vacancyRequest.apellidosSolicitante }">
+            {{
+              submitted && !vacancyRequest.apellidosSolicitante ? "Apellidos son requeridos" : "Apellidos"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-              <Calendar v-model="date" id="date" class="inputsLogin" />
-              <label for="date">Fecha de Nacimiento</label>
+              <Calendar v-model="date" id="birthDate" class="inputsLogin" required="true" 
+              :class="{ 'p-invalid': submitted && !vacancyRequest.fechaNacimientoSolicitante }"
+               />
+              <label for="birthDate" :class="{ 'p-error': submitted && !vacancyRequest.fechaNacimientoSolicitante }">
+            {{
+              submitted && !vacancyRequest.fechaNacimientoSolicitante ? "Fecha de Nac. es requerida" : "Fecha de Nacimiento"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText type="number"  class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Edad</label>
+            <InputText type="number"  class="inputsLogin" id="age" v-model="vacancyRequest.edadSolicitante" required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.edadSolicitante }"
+             />
+            <label for="age" :class="{ 'p-error': submitted && !vacancyRequest.edadSolicitante }">
+            {{
+              submitted && !vacancyRequest.edadSolicitante ? "Edad es requerido" : "Edad"
+            }}
+          </label>
           </FloatLabel>
 
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Numero de Telefono</label>
+            <InputText class="inputsLogin" id="phone" v-model="vacancyRequest.celularSolicitante" required="true" 
+            :class="{ 'p-invalid': submitted && !vacancyRequest.celularSolicitante }"
+            />
+            <label for="phone" :class="{ 'p-error': submitted && !vacancyRequest.celularSolicitante }">
+            {{
+              submitted && !vacancyRequest.celularSolicitante ? "Numero Celular es requerido" : "Numero de Celular"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Correo Electronico</label>
+            <InputText class="inputsLogin" type="email" id="email" v-model="vacancyRequest.correoSolicitante" required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.correoSolicitante }"
+             />
+            <label for="email" :class="{ 'p-error': submitted && !vacancyRequest.correoSolicitante }">
+            {{
+              submitted && !vacancyRequest.correoSolicitante ? "Correo Electronico es requerido" : "Correo Electronico"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <Dropdown
-            v-model="selectedCity"
+            v-model="vacancyRequest.estadoCivilSolicitante"
             editable
-            :options="cities"
-            optionLabel="name"
+            :options="civilStatus"
+            optionLabel="status"
             placeholder="Estado Civil"
             class="w-full md:w-32rem"
           />
@@ -103,10 +143,10 @@
 
         <div class="block">
           <Dropdown id="dropLogin"
-            v-model="selectedCity"
+            v-model="vacancyRequest.sexoSolicitante"
             editable
-            :options="cities"
-            optionLabel="name"
+            :options="genders"
+            optionLabel="gender"
             placeholder="Sexo"
             class="w-full md:w-32rem"
           />
@@ -115,11 +155,18 @@
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Direccion</label>
+            <InputText class="inputsLogin" id="address" v-model="vacancyRequest.direccionSolicitante" required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.direccionSolicitante }"
+             />
+            <label for="address" :class="{ 'p-error': submitted && !vacancyRequest.direccionSolicitante }">
+            {{
+              submitted && !vacancyRequest.direccionSolicitante ? "Direccion es requerida" : "Direccion"
+            }}
+          </label>
           </FloatLabel>
         </div>
         
+        <!--Formacion Academica-->
 
         <div class="fullLine">
           <h3>Formacion Academicos</h3>
@@ -129,52 +176,63 @@
         
         <div class="fullLine">
           
-          <DataTable :value="products">
-              <Column field="code" header="Code"></Column>
-              <Column field="name" header="Name"></Column>
-              <Column field="category" header="Category"></Column>
-              <Column field="quantity" header="Quantity"></Column>
+          <DataTable :value="allAcademic">
+              <Column field="titulo" header="Titulo"></Column>
+              <Column field="institucion" header="Institución"></Column>
+              <Column field="añoFinalizacion" header="Año Finalizacion"></Column>
           </DataTable>
           
 
         </div>
 
-        
 
         
 
         <div class="fullLine">
-          <Button label="Show" @click="visible = true" />
-          <Dialog v-model:visible="visible" modal header="Header" :style="{ width: '50vw', height:'25vw' }" 
+          <Button label="Agregar Formacion Academica" @click="visibleAcademicDialog = true" />
+          <Dialog v-model:visible="visibleAcademicDialog" modal header="Formación Académica" :style="{ width: '50vw', height:'25vw' }" 
           >
+          
             <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Direccion</label>
+                <InputText class="inputsLogin" id="tittle" v-model="titulo" required="true" 
+                :class="{ 'p-invalid': submitted && !titulo }" />
+                <label for="password" :class="{ 'p-error': submitted && !titulo }">
+                {{
+                  submitted && !titulo ? "Titulo es Requerido" : "Titulo"
+                }}
+          </label>
               </FloatLabel>
             </div>
 
             <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Direccion</label>
+                <InputText class="inputsLogin" id="academicInstitution" v-model="institucion" />
+                <label for="username">Institucion Academica</label>
               </FloatLabel>
             </div>
 
             <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Direccion</label>
+                <InputText class="inputsLogin" id="endYear" v-model="añoFinalizacion" required="true" 
+                :class="{ 'p-invalid': submitted && !añoFinalizacion }" />
+                <label for="endYear" :class="{ 'p-error': submitted && !añoFinalizacion }">
+                {{
+                  submitted && !añoFinalizacion? "Año de Finalizacion es Requerido" : "Año de Finalizacion"
+                }}
+          </label>
               </FloatLabel>
             </div>
 
             <div class="flex justify-content-end gap-2">
-              <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-              <Button type="button" label="Save" @click="visible = false"></Button>
+              <Button type="button" label="Cancel" severity="secondary" @click="visibleAcademicDialog = false"></Button>
+              <Button type="submit" label="Save"  @click="saveAcademicBackground"></Button>
           </div>
           </Dialog>
         </div>
 
+
+        <!--Vida comunitaria-->
         
         <div class="fullLine">
           <h3>Vida Comunitaria</h3>
@@ -183,57 +241,86 @@
         </div>
 
         <div class="block">
-          <Dropdown id="dropLogin"
-            v-model="selectedCity"
+        <FloatLabel class="FloatLabel">
+          <Dropdown
+            v-model="vacancyRequest.idComunidad"
+            id="comunity"
             editable
             :options="cities"
             optionLabel="name"
-            placeholder="Comunidad"
             class="w-full md:w-32rem"
+            required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.idComunidad }"
           />
-        </div>
+          <label for="comunity" :class="{ 'p-error': submitted && !vacancyRequest.idComunidad }">
+            {{
+              submitted && !vacancyRequest.idComunidad ? "Comunidad es Requerido" : "Comunidad"
+            }}
+          </label>
+        </FloatLabel>
+      </div>
 
         <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Horario de Formacion</label>
+                <InputText class="inputsLogin" id="formationStage" v-model="username" :readonly="true" />
+                <label for="formationStage">Etapa de Formacion</label>
               </FloatLabel>
         </div>
 
         <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Nombre del Catequista</label>
+                <InputText class="inputsLogin" id="catechistName" v-model="username" :readonly="true" />
+                <label for="catechistName">Nombre del Catequista</label>
               </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <Dropdown id="dropLogin"
-              v-model="selectedCity"
+            <Dropdown 
+            id="comunityDay"
+              v-model="vacancyRequest.diaComunidad"
               editable
-              :options="cities"
-              optionLabel="name"
+              :options="comunityDays"
+              optionLabel="day"
               class="w-full md:w-32rem"
+              required="true"
+              :class="{ 'p-invalid': submitted && !vacancyRequest.diaComunidad }"
             />
-            <label for="username">Etapa de Comunidad</label>
+            <label for="comunityDay" :class="{ 'p-error': submitted && !vacancyRequest.diaComunidad }">
+            {{
+              submitted && !vacancyRequest.idComunidad ? "Dia de Formacion es Requerido" : "Dia de Formacion"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-              <Calendar v-model="date" id="date" class="inputsLogin" />
-              <label for="date">Fecha de Nacimiento</label>
+              <Calendar v-model="date" id="dateStart" class="inputsLogin" required="true" 
+              :class="{ 'p-invalid': submitted && !vacancyRequest.fechaIniciacion }" />
+              <label for="dateStart" :class="{ 'p-error': submitted && !vacancyRequest.fechaIniciacion }">
+            {{
+              submitted && !vacancyRequest.fechaIniciacion ? "Fecha de Iniciacion es Requerido" : "Fecha de Iniciacion"
+            }}
+          </label>
           </FloatLabel>
         </div>
 
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <InputText type="number"  class="inputsLogin" id="username" v-model="username" />
-            <label for="username">Edad</label>
+            <InputText type="number"  class="inputsLogin" id="durationComunity" v-model="vacancyRequest.duracionComunidad" required="true"
+            :class="{ 'p-invalid': submitted && !vacancyRequest.duracionComunidad}"
+             />
+            <label for="durationComunity" :class="{ 'p-error': submitted && !vacancyRequest.duracionComunidad }">
+            {{
+              submitted && !vacancyRequest.duracionComunidad ? "Duracion en la Comunidad es requerido" : "Duracion en la Comunidad"
+            }}
+          </label>
           </FloatLabel>
 
         </div>
+
+        <!--Sacramentos-->
 
         <div class="fullLine">
           <h3>Sacramentos</h3>
@@ -242,9 +329,28 @@
         </div>
 
         <div class="block">
-          <MultiSelect v-model="selectedCities" :options="cities" optionLabel="name" placeholder="Select Cities"
-              :maxSelectedLabels="3" class="w-full md:w-32rem" />
+          <FloatLabel class="FloatLabel">
+            <MultiSelect 
+            id="sacraments"
+              v-model="vacancyRequest.sacramentosSolicitante"
+              editable
+              :options="sacraments"
+              optionLabel="sacraments"
+              class="w-full md:w-32rem"
+              required="true"
+              :class="{ 'p-invalid': submitted && !vacancyRequest.sacramentosSolicitante }"
+              :maxSelectedLabels="3"
+            />
+            <label for="sacraments" :class="{ 'p-error': submitted && !vacancyRequest.sacramentosSolicitante}">
+            {{
+              submitted && !vacancyRequest.sacramentosSolicitante ? "Sacramentos son Requeridos" : "Sacramentos Realizados"
+            }}
+          </label>
+          </FloatLabel>
         </div>
+
+
+        <!--Servicios Pastorales-->
 
         <div class="fullLine">
           <h3>Servicios Pastorales</h3>
@@ -269,27 +375,27 @@
         
 
         <div class="fullLine">
-          <Button label="Show" @click="visible = true" />
-          <Dialog v-model:visible="visible" modal header="Header" :style="{ width: '50vw', height:'25vw' }" 
+          <Button label="Show" @click="visibleServiceDialog = true" />
+          <Dialog v-model:visible="visibleServiceDialog" modal header="Servicios Pastorales" :style="{ width: '50vw', height:'25vw' }" 
           >
             <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Direccion</label>
+                <InputText class="inputsLogin" id="serviceName" v-model="pastoralServices.nombreServicio" />
+                <label for="serviceName">Nombre del Servicio</label>
               </FloatLabel>
             </div>
 
             <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Direccion</label>
+                <InputText class="inputsLogin" id="servicePlace" v-model="pastoralServices.lugarServicio" />
+                <label for="servicePlace">Lugar del Servicio</label>
               </FloatLabel>
             </div>
 
             <div class="block">
                 <FloatLabel class="FloatLabel">
-                <InputText class="inputsLogin" id="username" v-model="username" />
-                <label for="username">Direccion</label>
+                <InputText class="inputsLogin" id="serviceTime" v-model="pastoralServices.nombreServicio" />
+                <label for="serviceTime">Duracion del Servicio</label>
               </FloatLabel>
             </div>
 
@@ -300,24 +406,25 @@
           </Dialog>
         </div>
 
+
+        <!--Cuentanos de ti-->
         <div class="fullLine">
           <h3>Cuentanos de ti!!!</h3>
           <Divider class="Divider" type="solid" />
 
         </div>
 
-
         <div class="fullLineText"> 
           <FloatLabel class="FloatLabel">
-            <Textarea id="username" v-model="value" class="textLogin" />
-            <label for="username">Direccion</label>
+            <Textarea id="trayectory" v-model="vacancyRequest.trayectoriaSolicitante" class="textLogin" />
+            <label for="trayectory">DESCRIBA BREVEMENTE CÓMO HA SIDO SU TRAYECTORIA EN JMV</label>
           </FloatLabel>
         </div>
 
         <div class="fullLineText"> 
           <FloatLabel class="FloatLabel">
-            <Textarea id="username" v-model="value" class="textLogin" />
-            <label for="username">Direccion</label>
+            <Textarea id="expectations" v-model="vacancyRequest.expectativaSolicitante" class="textLogin" />
+            <label for="expectations">DESCRIBA SUS EXPECTATIVAS AL ASUMIR LA VOCALÍA A LA QUE SE POSTULA Y SU PLAN DE TRABAJO</label>
           </FloatLabel>
         </div>
 
@@ -325,11 +432,9 @@
       </div>
 
       
-      
-    
 
       <div class="card flex justify-content-center">
-        <Button label="Registrar" />
+        <Button label="Registrar" @click="saveVacancy" type="submit"/>
       </div>
 
     </div>
@@ -510,33 +615,68 @@ import { useToast } from "primevue/usetoast";
 import { ProductService } from '@/services/ProductService';
 import { createClient } from '@supabase/supabase-js'
 
+//Variables de Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 
+//Variables de Toast
 const toast = useToast();
 
-const onUpload = () => {
-  toast.add({
-    severity: "info",
-    summary: "Success",
-    detail: "File Uploaded",
-    life: 3000,
-  });
-};
 
+//Variables de estado
 
+const submitted=ref(false);
+const visibleAcademicDialog = ref(false);
+const visibleServiceDialog=ref(false);
 
+//Variables de datos
+
+const vacancyRequest=ref({});
+const academicBackground=ref({});
+const allAcademic=ref([]);
+const pastoralServices=ref({});
+
+const titulo=ref();
+const institucion=ref();
+const añoFinalizacion=ref();
+
+const contador=0;
 
 const username = ref(null);
-const password = ref(null);
-const phone = ref(null);
-const email = ref(null);
-const visible = ref(false);
 
-const selectedCity = ref();
+const civilStatus=ref([
+  {status:"Soltero/a", value:"Soltero/a"},
+  {status:"Casado/a", value:"Casado/a"},
+  {status:"Viudo/a", value:"Viudo/a"}
+]);
+
+const genders=ref([
+{gender:"Masculino", value:"Masculino"},
+{gender:"Femenino", value:"Femenino"},
+]);
+
+const comunityDays=ref([
+  {day: "Sabado en la tarde", value: "Sabado en la tarde"},
+  {day: "Sabado en la noche", value: "Sabado en la noche"},
+  {day: "Domingo en la mañana", value: "Domingo en la mañana"},
+  {day: "Domingo en la tarde", value: "Domingo en la tarde"},
+  {day: "Domingo en la noche", value: "Domingo en la noche"},
+  {day: "Lunes en la tarde", value: "Lunes en la tarde-noche"},
+  {day: "Martes en la tarde", value: "Martes en la tarde-noche"},
+  {day: "Miercoles en la tarde", value: "Miercoles en la tarde-noche"},
+  {day: "Jueves en la tarde", value: "Jueves en la tarde-noche"},
+  {day: "Viernes en la tarde", value: "Viernes en la tarde-noche"},
+]);
+
+const sacraments=ref([
+  {sacraments:"Bautismo",value:"Bautismo"},
+  {sacraments:"Confirmación",value:"Confirmación"},
+  {sacraments:"Eucaristía",value:"Eucaristía"},
+]);
+
 const cities = ref([
   { name: "New York", code: "NY" },
   { name: "Rome", code: "RM" },
@@ -547,6 +687,8 @@ const cities = ref([
 
 const selectedCities = ref();
 
+
+//Mounted
 onMounted(async () => {
     ProductService.getProductsMini().then((data) => (products.value = data));
 
@@ -557,5 +699,34 @@ onMounted(async () => {
   console.log(datos);
 
 });
+
+
+//Funciones
+
 const products = ref();
+
+const saveVacancy=()=>{
+  console.log("bien");
+  submitted.value=true;
+}
+
+const saveAcademicBackground=()=>{
+
+  console.log(titulo.value);
+
+  
+
+  allAcademic.value.push({
+    titulo: titulo.value,
+    institucion: institucion.value,
+    añoFinalizacion:añoFinalizacion.value
+  });
+
+  titulo.value=null;
+  institucion.value=null;
+  añoFinalizacion.value=null;
+
+  console.log(allAcademic.value);
+  visibleAcademicDialog.value=false;
+}
 </script>
