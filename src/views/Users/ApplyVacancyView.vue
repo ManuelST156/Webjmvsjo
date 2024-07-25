@@ -3,7 +3,7 @@
   <main class="LoginRegister">
     <div id="containerRegister" class="card flex justify-content-center">
       <h2 id="Tittle">
-        😁¡¡¡Forma Parte del Consejo y Aplica a una Vocalía!!! 😁
+        ¡¡¡Forma Parte del Consejo y Aplica a una Vocalía!!! 😁
       </h2>
 
       <!--========================================================-->
@@ -120,7 +120,7 @@
         <div class="block">
           <FloatLabel class="FloatLabel">
             <Calendar
-              v-model="date"
+              v-model="vacancyRequest.fechaNacimientoSolicitante"
               id="birthDate"
               class="inputsLogin"
               required="true"
@@ -230,6 +230,7 @@
             v-model="vacancyRequest.estadoCivilSolicitante"
             :options="civilStatus"
             optionLabel="status"
+            optionValue="value"
             placeholder="Estado Civil"
             class="w-full md:w-32rem"
           />
@@ -241,6 +242,7 @@
             v-model="vacancyRequest.sexoSolicitante"
             :options="genders"
             optionLabel="gender"
+            optionValue="value"
             placeholder="Sexo"
             class="w-full md:w-32rem"
           />
@@ -502,6 +504,7 @@
               v-model="vacancyRequest.diaComunidad"
               :options="comunityDays"
               optionLabel="day"
+              optionValue="value"
               class="w-full md:w-32rem"
               required="true"
               :class="{
@@ -524,7 +527,7 @@
         <div class="block">
           <FloatLabel class="FloatLabel">
             <Calendar
-              v-model="date"
+              v-model="vacancyRequest.fechaIniciacion"
               id="dateStart"
               class="inputsLogin"
               required="true"
@@ -591,6 +594,7 @@
               v-model="vacancyRequest.sacramentosSolicitante"
               :options="sacraments"
               optionLabel="sacraments"
+              optionValue="value"
               class="w-full md:w-32rem"
               required="true"
               :class="{
@@ -768,7 +772,7 @@
           <FloatLabel class="FloatLabel">
             <Textarea
               id="expectations"
-              v-model="vacancyRequest.expectativaSolicitante"
+              v-model="vacancyRequest.expectativasSolicitante"
               class="textLogin"
             />
             <label for="expectations"
@@ -795,6 +799,7 @@
           label="Registrar"
           @click="saveVacancy"
           type="submit"
+          :loading="loading"
         />
       </div>
     </div>
@@ -978,7 +983,8 @@ import { ref, onMounted } from "vue";
 import { useToast } from "primevue/usetoast";
 import { ProductService } from "@/services/ProductService";
 import { createClient } from "@supabase/supabase-js";
-
+import { uid } from "uid";
+import { jwtDecode } from "jwt-decode";
 
 //========================================================
 //Variables de Supabase
@@ -998,11 +1004,18 @@ const toast = useToast();
 //========================================================
 
 //========================================================
+//Variable de JWT para manejo de tokens
+/* const jwt_decode = require('jwt-decode'); */
+//========================================================
+
+
+//========================================================
 //Variables de estado
 
 const submitted = ref(false);
 const visibleAcademicDialog = ref(false);
 const visibleServiceDialog = ref(false);
+const loading=ref(false);
 
 //========================================================
 
@@ -1100,14 +1113,152 @@ onMounted(async () => {
 
 
 //Metodo para Guardar Solicitudes
-const saveVacancy = () => {
-  const upload = fileUpload.value;
+const saveVacancy = async () => {
 
-  console.log(upload.files[0]);
-  console.log("bien");
-  console.log(vacancyRequest.value.idVocalia);
-  submitted.value = true;
+  
+  try {
+      loading.value=true;
+      submitted.value = true;
+
+    console.log(fileUpload.value);
+
+    const Upload = fileUpload.value;
+
+
+    if (Upload.files.length > 0) {
+          const imagen = Upload.files[0];
+          console.log(imagen);
+          var nombreImagen = vacancyRequest.value.nombresSolicitante +"-"+"requestImage-"+uid(16).toString();
+
+          const subirStorage = await supabase.storage
+            .from("imageVacancy")
+            .upload(nombreImagen, imagen);
+
+          const urlDescargar = supabase.storage
+            .from("imageVacancy")
+            .getPublicUrl(nombreImagen);
+
+          vacancyRequest.value.imagenURL=urlDescargar.data.publicUrl;
+    }
+
+    vacancyRequest.value.sacramentosSolicitante=vacancyRequest.value.sacramentosSolicitante.join(',');
+
+    const {error,data}= await supabase
+    .from('Solicitudes')
+    .upsert(vacancyRequest.value)
+    .select()
+
+    const requestID=data[0].idSolicitud;
+
+
+    allAcademic.value.forEach(async element => {
+      const {id, ...newObject} =element;
+
+      const {error,data}= await supabase.from("FormacionAcademica").upsert(newObject).select();
+      
+      const bridgeTable=
+      {
+        idSolicitud: requestID, 
+        idFormacionAcademica:data[0].idFormacionAcademica
+      };
+      const uploadAcademicBackgroud=await supabase
+        .from("FormacionAcademicaSolicitud")
+        .upsert(bridgeTable)
+        .select();
+    });
+
+    allServices.value.forEach(async element=>{
+      const {id, ...newObject} =element;
+      const {error,data}= await supabase.from("Servicios").upsert(newObject).select();
+      
+      const bridgeTable=
+      {
+        idSolicitud: requestID, 
+        idServicio:data[0].idServicio
+      };
+
+      const uploadPastoralServices=await supabase
+        .from("ServiciosSolicitud")
+        .upsert(bridgeTable)
+        .select();
+
+      const { data: listAuthUsers} = await supabase
+      .from('Usuarios')
+      .select('idUsuario')
+      .eq('idAuth', decodeToken());
+
+      console.log(listAuthUsers);
+
+      /* const UserID=listAuthUsers.find(user => user.idAuth === decodeToken()); */
+
+      const userRequestData=
+      {
+        idUsuario: listAuthUsers[0].idUsuario,
+        idSolicitud: requestID,
+      }
+
+      
+      
+
+      
+      console.log(listAuthUsers);
+
+      
+      const uploadUserRequest= await supabase
+        .from("UsuarioSolicitud")
+        .upsert(userRequestData)
+        .select();
+
+      console.log(uploadUserRequest);
+
+      toast.add({
+        severity: "success",
+        summary: "Registro Agregado",
+        detail: "Solicitud Creada",
+        life: 3000,
+      });
+
+      loading.value=false;
+    });
+
+  } catch (error) {
+    
+    toast.add({
+      severity: "error",
+      summary: "Registro Vacio",
+      detail: "No se Agrega a la tabla",
+      life: 3000,
+    });
+
+    loading.value=false;
+
+  }
+
+  
+
+
+
 };
+
+
+//Metodo para decodificar token
+const decodeToken = () => {
+  try {
+    const token = localStorage.getItem('tokenJMV');
+    if (!token) {
+      throw new Error('No token found in localStorage');
+    }
+
+    const decodedToken = jwtDecode(token);
+    const userID = decodedToken.sub;
+
+    return userID;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
+
 
 //Metodo para cargar datos Comunidades en el Dropdown al ser seleccionada
 const loadComunityData = () => {
@@ -1133,7 +1284,8 @@ const loadComunityData = () => {
 //Metodo para mostrar la imagen, desde que es cargada
 const onFileChange = (event) => {
   console.log("hola llege");
-  const file = event.target.files[0];
+  fileUpload.value = event.target;
+  const file= event.target.files[0];
   const reader = new FileReader();
 
   reader.onload = function (e) {
@@ -1186,7 +1338,7 @@ const saveAcademicBackground = () => {
     academicBackground.value = {};
   } else {
     toast.add({
-      severity: "success",
+      severity: "error",
       summary: "Registro Vacio",
       detail: "No se Agrega a la tabla",
       life: 3000,
@@ -1223,7 +1375,7 @@ const savePastoralServices = () => {
     pastoralService.value = {};
   } else {
     toast.add({
-      severity: "success",
+      severity: "error",
       summary: "Registro Vacio",
       detail: "No se Agrega a la tabla",
       life: 3000,

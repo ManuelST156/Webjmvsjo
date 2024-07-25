@@ -185,11 +185,16 @@ const login = async () => {
   if (email.value != null && password.value != null) {
     if (validateEmail(email.value)) {
       try {
+        console.log("vino");
         loading.value = true;
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email.value,
           password: password.value,
         });
+
+        console.log(data);
+
+        localStorage.setItem('tokenJMV',data.session.access_token);
 
         if (error == null) {
           toast.add({
@@ -202,16 +207,19 @@ const login = async () => {
           submitted.value = false;
           setTimeout(async () => {
             loading.value = false;
-            router.push({ name: "home" });
+            router.push({ path: '/' }).then(() => {
+            window.location.reload();
+          });
           }, 1000);
-        } else {
+        } 
+        else {
           loading.value = false;
           toast.add({
             severity: "error",
             summary: "Correo o Contraseña Incorrectos",
             detail: "Error Credenciales Erroneas",
             life: 3000,
-          });
+          });  
         }
       } catch (error) {}
     } else {

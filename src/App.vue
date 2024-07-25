@@ -10,6 +10,9 @@
 import { RouterLink, RouterView } from "vue-router";
 import SideBar from "../src/components/SideBar.vue";
 import UpBotton from "../src/components/UpBotton.vue";
+
+
+
 </script>
 
 <style lang="scss">

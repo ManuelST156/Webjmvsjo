@@ -32,10 +32,15 @@
     </div>
 
     <div class="menu">
-      <router-link to="/iniciarSesion" class="button">
+      <router-link v-if="!isAuthenticated" to="/iniciarSesion" class="button">
         <span class="material-icons">account_circle</span>
         <span class="text">Iniciar Sesion</span>
       </router-link>
+
+      <a href="#" v-if="isAuthenticated"  class="button" @click="logOut">
+        <span class="material-icons">account_circle</span>
+        <span class="text">Cerrar Sesion</span>
+      </a>
 
       <router-link to="/ajustes" class="button">
         <span class="material-icons">settings</span>
@@ -43,20 +48,41 @@
       </router-link>
     </div>
 
+
     <div class="flex"></div>
   </aside>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import logoURL from "../assets/logo.png";
+import { useRouter } from "vue-router";
 
+
+
+const router = useRouter();
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true");
 
 const ToggleMenu = () => {
   is_expanded.value = !is_expanded.value;
   localStorage.setItem("is_expanded", is_expanded.value);
 };
+
+const isAuthenticated = computed(() => !!localStorage.getItem('tokenJMV'));
+const is=ref(false);
+
+const logOut=()=>{
+  
+  localStorage.removeItem('tokenJMV');
+
+  setTimeout(() => {
+            router.push({ path: '/' }).then(() => {
+            window.location.reload();
+          });
+          }, 500);
+
+}
+
 </script>
 
 <style lang="scss" scoped>

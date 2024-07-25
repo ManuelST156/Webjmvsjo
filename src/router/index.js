@@ -33,12 +33,13 @@ const router = createRouter({
     {
       path: '/ajustes',
       name: 'settings',
-      component: SettingsView
+      component: SettingsView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/iniciarSesion',
       name: 'login',
-      component: LoginView
+      component: LoginView,
     },
     {
       path: '/contactanos',
@@ -53,7 +54,8 @@ const router = createRouter({
     {
       path:'/aplicarVacante',
       name: 'applyVacancy',
-      component: ApplyVacancyView
+      component: ApplyVacancyView,
+      meta: { requiresAuth: true }
     },
     {
       path:'/cargando',
@@ -72,6 +74,23 @@ const router = createRouter({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  // Comprueba si el usuario está autenticado
+  const isAuthenticated = !!localStorage.getItem('tokenJMV');
+
+   // Verifica si el usuario está intentando acceder a la página de inicio de sesión
+   if (to.name === 'login' && isAuthenticated) {
+    // Si el usuario está autenticado, redirige a la página de inicio u otra página deseada
+    next({ name: 'home' });
+  } else if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    // Si la ruta requiere autenticación y el usuario no está autenticado, redirige al login
+    next({ name: 'login' });
+  } else {
+    // Si la ruta no requiere autenticación o el usuario está autenticado, permite el acceso
+    next();
+  }
+});
 
 export default router
 
