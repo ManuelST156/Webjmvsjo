@@ -10,7 +10,16 @@ import ApplyVacancyView from '@/views/Users/ApplyVacancyView.vue'
 import LoadingPageView from '@/views/StatusPages/LoadingView.vue'
 import NotFoundView from '@/views/StatusPages/NotFoundView.vue'
 import LoadingConfirmationView from '@/views/StatusPages/LoadingConfirmationView.vue'
+import SeeVacancyView from '@/views/Admin/SeeVacancyView.vue'
+import SeeFullVacancyView from '@/views/Admin/SeeFullVacancyView.vue'
+import ManageUsers from '@/views/Admin/ManageUsers.vue'
+import ManageComunities from '@/views/Admin/ManageComunities.vue'
+import ManageInfoPages from '@/views/Admin/ManageInfoPages.vue'
 
+import { AuthError, createClient } from "@supabase/supabase-js";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -58,6 +67,36 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path:'/verVacantes',
+      name: 'viewVacancy',
+      component: SeeVacancyView,
+      meta: { requiresAuth: true, roles:  'Admin'}
+    },
+    {
+      path:'/verPostulacion',
+      name: 'viewPostulation',
+      component: SeeFullVacancyView,
+      meta: { requiresAuth: true, roles:  'Admin'}
+    },
+    {
+      path:'/administrarUsuarios',
+      name: 'manageUsers',
+      component: ManageUsers,
+      meta: { requiresAuth: true, roles:  'Admin'}
+    },
+    {
+      path:'/administrarComunidades',
+      name: 'manageComunities',
+      component: ManageComunities,
+      meta: { requiresAuth: true, roles:  'Admin'}
+    },
+    {
+      path:'/administrarInfoPaginas',
+      name: 'manageInfoPages',
+      component: ManageInfoPages,
+      meta: { requiresAuth: true, roles:  'Admin'}
+    },
+    {
       path:'/cargando',
       name:'loadingPage',
       component: LoadingPageView
@@ -75,22 +114,44 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   // Comprueba si el usuario está autenticado
   const isAuthenticated = !!localStorage.getItem('tokenJMV');
+  const roles = to.matched.some(record => record.meta.roles);
+  const authenticate=to.matched.some(record => record.meta.requiresAuth);
 
    // Verifica si el usuario está intentando acceder a la página de inicio de sesión
    if (to.name === 'login' && isAuthenticated) {
     // Si el usuario está autenticado, redirige a la página de inicio u otra página deseada
+    
     next({ name: 'home' });
   } else if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
     // Si la ruta requiere autenticación y el usuario no está autenticado, redirige al login
     next({ name: 'login' });
-  } else {
+  } else if(roles && isAuthenticated && await getCurrentUser()!='Admin')
+  {
+    next({name: 'home'});
+    
+  }
+  else {
     // Si la ruta no requiere autenticación o el usuario está autenticado, permite el acceso
     next();
   }
 });
+
+const getCurrentUser=async()=>{
+  
+const { data: { user } } = await supabase.auth.getUser()
+
+const roleID= await supabase.from("Usuarios").select('idRolUsuario').eq('idAuth',user.id);
+
+console.log(roleID.data[0].idRolUsuario);
+
+const roleUser= await supabase.from("Roles").select('nombreRol').eq('idRol',roleID.data[0].idRolUsuario);
+
+console.log(roleUser.data[0].nombreRol);
+return roleUser.data[0].nombreRol;
+}
 
 export default router
 

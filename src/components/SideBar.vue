@@ -21,10 +21,27 @@
         <span class="material-icons">description</span>
         <span class="text">Sobre Nosotros</span>
       </router-link>
+
       <router-link to="/vacantes" class="button">
         <span class="material-icons">group</span>
         <span class="text">Vocalias</span>
       </router-link>
+
+      <router-link v-if="userStatus=='Admin'" to="/administrarUsuarios" class="button">
+        <span class="material-icons">group</span>
+        <span class="text">Administrar Usuarios</span>
+      </router-link>
+
+      <router-link v-if="userStatus=='Admin'" to="/administrarComunidades" class="button">
+        <span class="material-icons">group</span>
+        <span class="text">Administrar Comunidades</span>
+      </router-link>
+
+      <router-link v-if="userStatus=='Admin'" to="/administrarInfoPaginas" class="button">
+        <span class="material-icons">group</span>
+        <span class="text">Administrar Info Paginas</span>
+      </router-link>
+
       <router-link to="/contactanos" class="button">
         <span class="material-icons">email</span>
         <span class="text">Contactanos</span>
@@ -57,6 +74,20 @@
 import { ref, computed, watch } from "vue";
 import logoURL from "../assets/logo.png";
 import { useRouter } from "vue-router";
+import { createClient } from "@supabase/supabase-js";
+
+
+const userStatus=ref(sessionStorage.getItem('userRol'));
+console.log(userStatus.value);
+//========================================================
+//Variables de Supabase
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+
+//========================================================
 
 
 
@@ -69,11 +100,15 @@ const ToggleMenu = () => {
 };
 
 const isAuthenticated = computed(() => !!localStorage.getItem('tokenJMV'));
-const is=ref(false);
 
-const logOut=()=>{
+
+const logOut=async ()=>{
   
   localStorage.removeItem('tokenJMV');
+  sessionStorage.removeItem('userRol');
+  console.log("se borro", sessionStorage.getItem('userRol'));
+
+  const { error } = await supabase.auth.signOut()
 
   setTimeout(() => {
             router.push({ path: '/' }).then(() => {

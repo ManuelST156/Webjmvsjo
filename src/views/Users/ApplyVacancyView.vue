@@ -41,7 +41,7 @@
           </FloatLabel>
         </div>
 
-        <div class="block">
+        <div class="blockUpload">
           <Toast />
 
           <label class="labelFile" for="fileInput">Subir una foto</label>
@@ -268,7 +268,7 @@
               {{
                 submitted && !vacancyRequest.direccionSolicitante
                   ? "Direccion es requerida"
-                  : "Direccion"
+                  : "Direccion de Residencia"
               }}
             </label>
           </FloatLabel>
@@ -341,7 +341,7 @@
           <Button
             class="buttonSend"
             label="Agregar Formacion Academica"
-            @click="visibleAcademicDialog = true"
+            @click="(visibleAcademicDialog = true), (academicBackground={});"
           />
           <Dialog
             v-model:visible="visibleAcademicDialog"
@@ -683,7 +683,7 @@
           <Button
             class="buttonSend"
             label="Agregar Servicios Pastorales"
-            @click="visibleServiceDialog = true"
+            @click="(visibleServiceDialog = true), (pastoralService={});"
           />
           <Dialog
             v-model:visible="visibleServiceDialog"
@@ -857,7 +857,7 @@
 }
 
 #imageUpload {
-  width: 70%;
+  width: 230px;
   height: 230px;
   background-color: lightgray;
   margin-bottom: 30px;
@@ -900,6 +900,14 @@
   margin: 10px 0;
   flex: 1 1 calc(50% - 20px);
   min-width: 200px;
+}
+
+.blockUpload{
+  width: 75%;
+  height: 60px;
+  margin: 10px 0;
+  /* flex: 1 1 calc(20% - 20px); */
+  min-width: 20px;
 }
 
 .pruebaImg {
@@ -1016,6 +1024,7 @@ const submitted = ref(false);
 const visibleAcademicDialog = ref(false);
 const visibleServiceDialog = ref(false);
 const loading=ref(false);
+const isEditing=ref(false);
 
 //========================================================
 
@@ -1035,6 +1044,9 @@ const vacancyList = ref([]);
 const comunityList = ref([]);
 const usersList = ref([]);
 const formationStageList = ref([]);
+const academicDeleted=ref([]);
+const servicesDeleted=ref([]);
+
 
 //Variables Primitivas
 const catechistName = ref();
@@ -1042,6 +1054,7 @@ const formationStage = ref();
 const fileUpload = ref(null); //Variable para la imagen
 const isEditAcademic = ref(false);
 const isEditService = ref(false);
+const getRequestID=ref();
 
 
 //Variable Array con Datos Predefinidos
@@ -1084,25 +1097,82 @@ const sacraments = ref([
 
 onMounted(async () => {
 
-  /* let datos = await supabase
-  .from('Solicitudes')
-  .select('*') */
+  /* const utcDate = new Date('2024-07-25T03:37:40.086054Z');
+  const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: 'America/Santo_Domingo' })); */
 
+/* console.log(localDate.toString()); */
   let vacancyGet = await supabase.from("Vocalias").select("*");
 
-  let comunityGet = await supabase.from("Comunidad").select("*");
+  let comunityGet = await supabase.from("datoscompletocomunidad").select("*");
 
-  let usersGet = await supabase.from("Usuarios").select("*");
+  /* let usersGet = await supabase.from("Usuarios").select("*"); */
 
-  let formationStageGet = await supabase.from("EtapaFormacion").select("*");
+  /* let formationStageGet = await supabase.from("EtapaFormacion").select("*"); */
 
   vacancyList.value = vacancyGet.data;
   comunityList.value = comunityGet.data;
-  usersList.value = usersGet.data;
-  formationStageList.value = formationStageGet.data;
+
+  /* usersList.value = usersGet.data; */
+  /* formationStageList.value = formationStageGet.data; */
 
   console.log(vacancyList.value);
   console.log(comunityList.value);
+
+
+  if(localStorage.getItem('isEditing'))
+  {
+    getRequestID.value= localStorage.getItem("isEditing");
+    console.log(getRequestID.value);
+
+    const requestGet= await supabase
+      .from("Solicitudes")
+      .select("*")
+      .eq('idSolicitud', getRequestID.value);
+
+      console.log(requestGet);
+
+    
+    const requestServicesGet= await supabase
+      .from("obtenerservicios")
+      .select("*")
+      .eq('idSolicitud',getRequestID.value);
+
+  
+
+    const requestAcademicGet= await supabase
+    .from("obtenerformacionacademica")
+    .select("*")
+    .eq('idSolicitud',getRequestID.value);
+    
+    console.log(requestServicesGet,requestAcademicGet);
+
+    vacancyRequest.value=requestGet.data[0];
+    vacancyRequest.value.sacramentosSolicitante=vacancyRequest.value.sacramentosSolicitante.split(',');
+    console.log(vacancyRequest.value.sacramentosSolicitante);
+
+    
+    requestAcademicGet.data.forEach(element => {
+      const {idSolicitud, ...newObject} =element;
+
+      allAcademic.value.push(newObject);
+    });
+    console.log(allAcademic.value);
+
+    requestServicesGet.data.forEach(element => {
+      console.log(element);
+      const {idSolicitud, ...newObject} =element;
+      allServices.value.push(newObject);
+    });
+
+    console.log(allServices.value);
+
+    console.log(vacancyRequest.value);
+    document.getElementById("imageUpload").src=vacancyRequest.value.imagenURL;
+    isEditing.value=!!localStorage.getItem("isEditing");
+    console.log(isEditing.value);
+    localStorage.removeItem("isEditing");
+  }
+
 });
 
 //========================================================
@@ -1120,26 +1190,31 @@ const saveVacancy = async () => {
       loading.value=true;
       submitted.value = true;
 
-    console.log(fileUpload.value);
+    if(fileUpload.value!=null)
+    {
 
-    const Upload = fileUpload.value;
+      const Upload = fileUpload.value;
 
 
-    if (Upload.files.length > 0) {
-          const imagen = Upload.files[0];
-          console.log(imagen);
-          var nombreImagen = vacancyRequest.value.nombresSolicitante +"-"+"requestImage-"+uid(16).toString();
+      if (Upload.files.length > 0) {
+            const imagen = Upload.files[0];
+            console.log(imagen);
+            var nombreImagen = vacancyRequest.value.nombresSolicitante +"-"+"requestImage-"+uid(16).toString();
 
-          const subirStorage = await supabase.storage
-            .from("imageVacancy")
-            .upload(nombreImagen, imagen);
+            const subirStorage = await supabase.storage
+              .from("imageVacancy")
+              .upload(nombreImagen, imagen);
 
-          const urlDescargar = supabase.storage
-            .from("imageVacancy")
-            .getPublicUrl(nombreImagen);
+            const urlDescargar = supabase.storage
+              .from("imageVacancy")
+              .getPublicUrl(nombreImagen);
 
-          vacancyRequest.value.imagenURL=urlDescargar.data.publicUrl;
+            vacancyRequest.value.imagenURL=urlDescargar.data.publicUrl;
+      }
+
+
     }
+
 
     vacancyRequest.value.sacramentosSolicitante=vacancyRequest.value.sacramentosSolicitante.join(',');
 
@@ -1151,37 +1226,116 @@ const saveVacancy = async () => {
     const requestID=data[0].idSolicitud;
 
 
-    allAcademic.value.forEach(async element => {
-      const {id, ...newObject} =element;
+   
+    if(allAcademic.value.length!=0)
+    {
+      allAcademic.value.forEach(async element => {
 
-      const {error,data}= await supabase.from("FormacionAcademica").upsert(newObject).select();
-      
-      const bridgeTable=
+      if(Number.isInteger(element.idFormacionAcademica))
       {
-        idSolicitud: requestID, 
-        idFormacionAcademica:data[0].idFormacionAcademica
-      };
-      const uploadAcademicBackgroud=await supabase
+        if(academicDeleted.value.length!=0)
+        {
+          academicDeleted.value.forEach( async element=>{
+
+          const {data:deleteDataAcademicRequest}= await supabase
+          .from("FormacionAcademicaSolicitud")
+          .delete()
+          .eq('idFormacionAcademica',element.idFormacionAcademica);
+
+
+          const {data:deleteDataAcademic}= await supabase
+          .from("FormacionAcademica")
+          .delete()
+          .eq('idFormacionAcademica',element.idFormacionAcademica);
+
+          
+
+          });
+        }
+
+
+        const {error,data}= await supabase.from("FormacionAcademica").upsert(element).select();
+        console.log(data);
+      }
+      else
+      {
+        const {idFormacionAcademica, ...newObject} =element;
+        const {error,data}= await supabase.from("FormacionAcademica").upsert(newObject).select();
+        console.log(data);
+
+
+        const bridgeTable=
+        {
+          idSolicitud: getRequestID.value, 
+          idFormacionAcademica:data[0].idFormacionAcademica
+        };
+
+        const uploadAcademicBackgroud=await supabase
         .from("FormacionAcademicaSolicitud")
         .upsert(bridgeTable)
         .select();
-    });
-
-    allServices.value.forEach(async element=>{
-      const {id, ...newObject} =element;
-      const {error,data}= await supabase.from("Servicios").upsert(newObject).select();
+      }
+      }); 
+    }
       
-      const bridgeTable=
+    if(allServices.value.length!=0)
+    {
+      allServices.value.forEach(async element=>{
+
+
+      if(Number.isInteger(element.idServicio)){
+
+        if(servicesDeleted.value.length!=0)
+        {
+          servicesDeleted.value.forEach( async element=>{
+
+
+          const {data:deleteDataServicesRequest}= await supabase
+          .from("ServiciosSolicitud")
+          .delete()
+          .eq('idServicio',element.idServicio);
+
+
+          const {data:deleteDataServices}= await supabase
+          .from("Servicios")
+          .delete()
+          .eq('idServicio',element.idServicio);
+
+          
+
+          });
+        }
+        
+
+        const {error,data}= await supabase.from("Servicios").upsert(element).select();
+        console.log(element); 
+      }
+      else
       {
-        idSolicitud: requestID, 
-        idServicio:data[0].idServicio
-      };
+        const {idServicio, ...newObject} =element;
+        const {error,data}= await supabase.from("Servicios").upsert(newObject).select();
+        console.log(data);
 
-      const uploadPastoralServices=await supabase
-        .from("ServiciosSolicitud")
-        .upsert(bridgeTable)
-        .select();
+        const bridgeTable=
+        {
+          idSolicitud: getRequestID.value, 
+          idServicio:data[0].idServicio
+        };
 
+        const uploadPastoralServices=await supabase
+          .from("ServiciosSolicitud")
+          .upsert(bridgeTable)
+          .select();
+      }
+      });
+    }
+   
+
+      
+
+      if(!isEditing.value){
+
+        
       const { data: listAuthUsers} = await supabase
       .from('Usuarios')
       .select('idUsuario')
@@ -1189,16 +1343,12 @@ const saveVacancy = async () => {
 
       console.log(listAuthUsers);
 
-      /* const UserID=listAuthUsers.find(user => user.idAuth === decodeToken()); */
 
       const userRequestData=
       {
         idUsuario: listAuthUsers[0].idUsuario,
         idSolicitud: requestID,
       }
-
-      
-      
 
       
       console.log(listAuthUsers);
@@ -1217,9 +1367,22 @@ const saveVacancy = async () => {
         detail: "Solicitud Creada",
         life: 3000,
       });
+      }
+      else
+      {
+        toast.add({
+        severity: "success",
+        summary: "Registro Actualizado",
+        detail: "Solicitud Actualizada",
+        life: 3000,
+        });
+      }
+
+      
 
       loading.value=false;
-    });
+
+
 
   } catch (error) {
     
@@ -1229,6 +1392,8 @@ const saveVacancy = async () => {
       detail: "No se Agrega a la tabla",
       life: 3000,
     });
+
+    console.log(error);
 
     loading.value=false;
 
@@ -1266,19 +1431,11 @@ const loadComunityData = () => {
     (c) => c.idComunidad === vacancyRequest.value.idComunidad
   );
 
-  if (getDataComunity) {
-    const catechistID = getDataComunity.idCatequista;
-    const formationStageID = getDataComunity.idEtapaFormacion;
+  console.log(getDataComunity);
 
-    const getUser = usersList.value.find((c) => c.idUsuario === catechistID);
-    const getFormationStage = formationStageList.value.find(
-      (c) => c.idEtapaFormacion === formationStageID
-    );
-
-    catechistName.value =
-      getUser.nombresUsuario + " " + getUser.apellidosUsuario;
-    formationStage.value = getFormationStage.nombreEtapa;
-  }
+  formationStage.value=getDataComunity.nombreEtapa;
+  catechistName.value=getDataComunity.nombrecatequista;
+  
 };
 
 //Metodo para mostrar la imagen, desde que es cargada
@@ -1304,15 +1461,17 @@ const onFileChange = (event) => {
 
 //Funcion para Guardar Formacion Academica de Forma Temporal
 const saveAcademicBackground = () => {
+
   console.log(academicBackground.value);
   if (
     academicBackground.value &&
     Object.keys(academicBackground.value).length > 0
   ) {
-    console.log("entro");
-    if (academicBackground.value.id) {
+
+
+    if (academicBackground.value.idFormacionAcademica) {
       console.log("editando");
-      allAcademic.value[findIndexById(academicBackground.value.id)] =
+      allAcademic.value[findIndexById(academicBackground.value.idFormacionAcademica)] =
         academicBackground.value;
       toast.add({
         severity: "success",
@@ -1320,11 +1479,14 @@ const saveAcademicBackground = () => {
         detail: "Formacion Academica Acatualizada",
         life: 3000,
       });
+      
+      
     } else {
       console.log("que problema");
 
-      academicBackground.value.id = createId();
+      academicBackground.value.idFormacionAcademica = createId();
       allAcademic.value.push(academicBackground.value);
+      console.log(allAcademic.value);
 
       toast.add({
         severity: "success",
@@ -1351,8 +1513,8 @@ const savePastoralServices = () => {
   console.log(pastoralService.value);
   if (pastoralService.value && Object.keys(pastoralService.value).length > 0) {
     console.log(pastoralService.value);
-    if (pastoralService.value.id) {
-      allServices.value[findIndexById(pastoralService.value.id)] =
+    if (pastoralService.value.idServicio) {
+      allServices.value[findIndexById(pastoralService.value.idServicio)] =
         pastoralService.value;
       toast.add({
         severity: "success",
@@ -1361,7 +1523,7 @@ const savePastoralServices = () => {
         life: 3000,
       });
     } else {
-      pastoralService.value.id = createId();
+      pastoralService.value.idServicio = createId();
       allServices.value.push(pastoralService.value);
 
       toast.add({
@@ -1393,10 +1555,21 @@ const editAcademic = (prod) => {
 //Funcion para Borrar Datos de Formacion Academica
 const deleteAcademic = (prod) => {
   academicBackground.value = prod;
-  allAcademic.value = allAcademic.value.filter(
-    (val) => val.id !== academicBackground.value.id
+
+  const toDelete=allAcademic.value.filter(
+    (val) => val.idFormacionAcademica == academicBackground.value.idFormacionAcademica
   );
+
+
+  academicDeleted.value.push(toDelete[0]);
+
+
+  allAcademic.value = allAcademic.value.filter(
+    (val) => val.idFormacionAcademica !== academicBackground.value.idFormacionAcademica
+  );
+
   academicBackground.value = {};
+
   toast.add({
     severity: "success",
     summary: "Registro Eliminado",
@@ -1415,8 +1588,15 @@ const editService = (prod) => {
 //Funcion para Borrar Datos de Servicios Pastorales
 const deleteService = (prod) => {
   pastoralService.value = prod;
+
+  const toDelete=allServices.value.filter(
+    (val) => val.idServicio == pastoralService.value.idServicio
+  );
+  servicesDeleted.value.push(toDelete[0]);
+  console.log(servicesDeleted.value);
+
   allServices.value = allServices.value.filter(
-    (val) => val.id !== pastoralService.value.id
+    (val) => val.idServicio !== pastoralService.value.idServicio
   );
   pastoralService.value = {};
   toast.add({
@@ -1433,7 +1613,7 @@ const findIndexById = (id) => {
   if (isEditAcademic.value) {
     let index = -1;
     for (let i = 0; i < allAcademic.value.length; i++) {
-      if (allAcademic.value[i].id === id) {
+      if (allAcademic.value[i].idFormacionAcademica === id) {
         index = i;
         break;
       }
@@ -1443,7 +1623,7 @@ const findIndexById = (id) => {
   } else {
     let index = -1;
     for (let i = 0; i < allServices.value.length; i++) {
-      if (allServices.value[i].id === id) {
+      if (allServices.value[i].idServicio === id) {
         index = i;
         break;
       }

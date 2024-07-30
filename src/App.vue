@@ -10,8 +10,59 @@
 import { RouterLink, RouterView } from "vue-router";
 import SideBar from "../src/components/SideBar.vue";
 import UpBotton from "../src/components/UpBotton.vue";
+import { onMounted, ref } from "vue";
+import { createClient } from "@supabase/supabase-js";
 
 
+//========================================================
+//Variables de Supabase
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+
+//========================================================
+
+
+//Variable de Estado
+const userStatus=ref();
+
+onMounted(async ()=>{
+
+const { data: { user } } = await supabase.auth.getUser()
+
+console.log(user);
+
+
+userStatus.value= await getCurrentUser(user);
+console.log(userStatus.value);
+
+sessionStorage.setItem('userRol',userStatus.value);
+
+console.log(sessionStorage.getItem('userRol'))
+
+});
+
+
+//Methods
+
+//Metodo para comprobar usuario
+const getCurrentUser=async(user)=>{
+  
+  if(user!=null){
+    const roleID= await supabase.from("Usuarios").select('idRolUsuario').eq('idAuth',user.id);
+  
+    console.log(roleID.data[0].idRolUsuario);
+    
+    const roleUser= await supabase.from("Roles").select('nombreRol').eq('idRol',roleID.data[0].idRolUsuario);
+    
+    console.log(roleUser.data[0].nombreRol);
+    return roleUser.data[0].nombreRol;
+  }
+  
+    return 'Miembro';
+  }
 
 </script>
 
