@@ -37,9 +37,15 @@
         <span class="text">Administrar Comunidades</span>
       </router-link>
 
-      <router-link v-if="userStatus=='Admin'" to="/administrarInfoPaginas" class="button">
+      <router-link v-if="userStatus=='Admin'" to="/administrarInfoVistas" class="button">
         <span class="material-icons">group</span>
-        <span class="text">Administrar Info Paginas</span>
+        <span class="text">Administrar Vistas</span>
+      </router-link>
+      
+
+      <router-link v-if="userStatus=='Admin'" to="/administrarPaginaInicio" class="button">
+        <span class="material-icons">group</span>
+        <span class="text">Administrar Pagina de Inicio</span>
       </router-link>
 
       <router-link to="/contactanos" class="button">
@@ -59,7 +65,7 @@
         <span class="text">Cerrar Sesion</span>
       </a>
 
-      <router-link to="/ajustes" class="button">
+      <router-link v-if="isAuthenticated" to="/ajustes" class="button">
         <span class="material-icons">settings</span>
         <span class="text">Ajustes</span>
       </router-link>
@@ -138,10 +144,12 @@ aside {
   }
 
   .logo {
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
+    margin-left: 3px;
 
     img {
-      width: 2rem;
+      width: 1.8rem;
+      
     }
   }
 
@@ -151,7 +159,7 @@ aside {
   }
 
   .menu-toggle-wrap {
-    margin-bottom: 1rem;
+    margin-bottom: 0.4rem;
 
     position: relative;
     top: 0;
@@ -182,8 +190,8 @@ aside {
 
   h3 {
     color: var(--grey);
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
     text-transform: uppercase;
   }
 

@@ -14,7 +14,8 @@ import SeeVacancyView from '@/views/Admin/SeeVacancyView.vue'
 import SeeFullVacancyView from '@/views/Admin/SeeFullVacancyView.vue'
 import ManageUsers from '@/views/Admin/ManageUsers.vue'
 import ManageComunities from '@/views/Admin/ManageComunities.vue'
-import ManageInfoPages from '@/views/Admin/ManageInfoPages.vue'
+import ManageHomePage from '@/views/Admin/ManageHomePage.vue'
+import ManageInfoView from '@/views/Admin/ManageInfoView.vue'
 
 import { AuthError, createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -91,9 +92,15 @@ const router = createRouter({
       meta: { requiresAuth: true, roles:  'Admin'}
     },
     {
-      path:'/administrarInfoPaginas',
-      name: 'manageInfoPages',
-      component: ManageInfoPages,
+      path:'/administrarPaginaInicio',
+      name: 'manageHomePage',
+      component: ManageHomePage,
+      meta: { requiresAuth: true, roles:  'Admin'}
+    },
+    {
+      path:'/administrarInfoVistas',
+      name: 'manageInfoView',
+      component: ManageInfoView ,
       meta: { requiresAuth: true, roles:  'Admin'}
     },
     {
