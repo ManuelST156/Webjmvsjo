@@ -2,27 +2,7 @@
   <Toast />
   <main class="LoginRegister">
     <div id="containerRegister" class="card flex justify-content-center">
-      <h1 id="Tittle">Iniciar Sesion</h1>
-
-      <div class="block">
-        <FloatLabel class="FloatLabel">
-          <InputText
-            class="inputsLogin"
-            type="email"
-            id="email"
-            v-model="email"
-            required="true"
-            :class="{ 'p-invalid': submitted && !email }"
-          />
-          <label for="email" :class="{ 'p-error': submitted && !email }">
-            {{
-              submitted && !email
-                ? "Correo Electronico es requerido"
-                : "Correo Electronico"
-            }}
-          </label>
-        </FloatLabel>
-      </div>
+      <h1 id="Tittle">Cambiar Contraseña</h1>
 
       <div class="block">
         <FloatLabel class="FloatLabel">
@@ -43,26 +23,38 @@
         </FloatLabel>
       </div>
 
-      <div class="linksForget">
-        <router-link to="/recuperarPass">
-          <span class="text">Has Olvidado Tu Contraseña?</span>
-        </router-link>
+      <div class="block">
+        <FloatLabel class="FloatLabel">
+          <Password
+            class="inputsLogin"
+            v-model="verificationPass"
+            toggleMask
+            :feedback="false"
+            id="recoveryPassword"
+            required="true"
+            :class="{ 'p-invalid': submitted && !verificationPass }"
+          />
+          <label
+            for="recoveryPassword"
+            :class="{ 'p-error': submitted && !verificationPass }"
+          >
+            {{
+              submitted && !verificationPass
+                ? "Verficacion de Contraseña es requerido"
+                : "Verificacion de Contraseña"
+            }}
+          </label>
+        </FloatLabel>
       </div>
 
       <div class="card flex justify-content-center">
         <Button
           type="submit"
           class="buttonSend"
-          label="Iniciar Sesion"
-          @click="login"
+          label="Recuperar Contraseña"
+          @click="changePass"
           :loading="loading"
         />
-      </div>
-
-      <div class="linksLogin">
-        <router-link to="/registrar">
-          <span class="text">Crear Cuenta</span>
-        </router-link>
       </div>
     </div>
   </main>
@@ -222,15 +214,14 @@ import { useRouter } from "vue-router";
 //Variables de Supabase
 //========================================================
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseSK = import.meta.env.VITE_SUPABASE_SECRET_KEY;
+const supabase = createClient(supabaseUrl, supabaseSK);
 
 //========================================================
 //Variables y FUnciones Toast
 //========================================================
 
 const toast = useToast();
-
 
 //========================================================
 //variables de estado
@@ -242,7 +233,7 @@ const loading = ref(false);
 //========================================================
 ////variables de datos
 //========================================================
-const email = ref(null);
+const verificationPass = ref(null);
 const password = ref(null);
 const router = useRouter();
 
@@ -251,60 +242,63 @@ const router = useRouter();
 //========================================================
 
 //Metodo para iniciar sesion
-const login = async () => {
+const changePass = async () => {
   submitted.value = true;
+  const email = getParams('email');
 
-  if (email.value != null && password.value != null) {
-    if (validateEmail(email.value)) {
+  if (verificationPass.value != null && password.value != null) {
+    if (password.value == verificationPass.value) {
       try {
         loading.value = true;
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.value,
+        /* const { data, error } = await supabase.auth.updateUser({
           password: password.value,
-        });
-        
-        localStorage.setItem("tokenJMV", data.session.access_token);
-        const userStatus=await getCurrentUser(data.user.id);
-        if(userStatus==='Admin')
+        }); */
+
+        const dataUsers = await supabase
+      .from("usuarioscredenciales")
+      .select("id")
+      .eq("email", email);
+
+      console.log(dataUsers.data[0].id);
+
+      const { data, error } = await supabase.auth.admin.updateUserById(
+        dataUsers.data[0].id,
         {
-          sessionStorage.setItem("userRol", userStatus);
-
-          console.log(sessionStorage.getItem("userRol")); 
+          password: password.value,
         }
-
+      );
 
         if (error == null) {
           toast.add({
             severity: "success",
-            summary: "Bienvenido a JMV SJO",
-            detail: "Usuario Logueado Correctamente",
+            summary: "Cambio de Contraseña Realizado",
+            detail: "Contraseña Cambiada",
             life: 3000,
           });
 
           submitted.value = false;
-          
+
           setTimeout(async () => {
             loading.value = false;
-            router.push({ path: "/" }).then(() => {
+            router.push({ path: "/iniciarSesion" }).then(() => {
               window.location.reload();
             });
-            
           }, 1000);
-        } 
-      } catch (error) {
-        loading.value = false;
+        } else {
+          loading.value = false;
           toast.add({
             severity: "error",
-            summary: "Correo o Contraseña Incorrectos",
-            detail: "Error Credenciales Erroneas",
+            summary: "Error al Actualizar Contraseña",
+            detail: error,
             life: 3000,
           });
-      }
+        }
+      } catch (error) {}
     } else {
       toast.add({
         severity: "error",
-        summary: "Este correo electronico no es valido",
-        detail: "Registro no completado",
+        summary: "Contraseña y Verificacin de Contraseña no Coinciden",
+        detail: "Cambio no completado",
         life: 3000,
       });
     }
@@ -312,36 +306,14 @@ const login = async () => {
     toast.add({
       severity: "error",
       summary: "Debe Completar todos los campos",
-      detail: "Registro No Completado",
+      detail: "Cambio No Completado",
       life: 3000,
     });
   }
 };
 
-const getCurrentUser = async (user) => {
-  if (user != null) {
-    const roleID = await supabase
-      .from("Usuarios")
-      .select("idRolUsuario")
-      .eq("idAuth", user);
-
-    console.log(roleID.data[0].idRolUsuario);
-
-    const roleUser = await supabase
-      .from("Roles")
-      .select("nombreRol")
-      .eq("idRol", roleID.data[0].idRolUsuario);
-
-    console.log(roleUser.data[0].nombreRol);
-    return roleUser.data[0].nombreRol;
-  }
-
-  return "Miembro";
-};
-
-//Metodo para validar Email
-const validateEmail = (email) => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-};
+const getParams=(param)=>{
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 </script>

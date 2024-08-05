@@ -1,5 +1,8 @@
 <template>
   <aside :class="`${is_expanded ? 'is-expanded' : ''}`">
+     <!--========================================================-->
+     <!--Menu SideBar y las rutas-->
+     <!--========================================================-->
     <div class="logo">
       <img src="../assets/logo.png" alt="Vue" />
     </div>
@@ -18,33 +21,48 @@
       </router-link>
 
       <router-link to="/acercadenosotros" class="button">
-        <span class="material-icons">description</span>
+        <span class="material-icons">menu_book</span>
         <span class="text">Sobre Nosotros</span>
       </router-link>
 
       <router-link to="/vacantes" class="button">
-        <span class="material-icons">group</span>
+        <span class="material-icons">description</span>
         <span class="text">Vocalias</span>
       </router-link>
 
-      <router-link v-if="userStatus=='Admin'" to="/administrarUsuarios" class="button">
+      <router-link
+        v-if="userStatus == 'Admin'"
+        to="/administrarUsuarios"
+        class="button"
+      >
         <span class="material-icons">group</span>
         <span class="text">Administrar Usuarios</span>
       </router-link>
 
-      <router-link v-if="userStatus=='Admin'" to="/administrarComunidades" class="button">
-        <span class="material-icons">group</span>
+      <router-link
+        v-if="userStatus == 'Admin'"
+        to="/administrarComunidades"
+        class="button"
+      >
+        <span class="material-icons">diversity_1</span>
         <span class="text">Administrar Comunidades</span>
       </router-link>
 
-      <router-link v-if="userStatus=='Admin'" to="/administrarInfoVistas" class="button">
-        <span class="material-icons">group</span>
+      <router-link
+        v-if="userStatus == 'Admin'"
+        to="/administrarInfoVistas"
+        class="button"
+      >
+        <span class="material-icons">layers</span>
         <span class="text">Administrar Vistas</span>
       </router-link>
-      
 
-      <router-link v-if="userStatus=='Admin'" to="/administrarPaginaInicio" class="button">
-        <span class="material-icons">group</span>
+      <router-link
+        v-if="userStatus == 'Admin'"
+        to="/administrarPaginaInicio"
+        class="button"
+      >
+        <span class="material-icons">real_estate_agent</span>
         <span class="text">Administrar Pagina de Inicio</span>
       </router-link>
 
@@ -60,7 +78,7 @@
         <span class="text">Iniciar Sesion</span>
       </router-link>
 
-      <a href="#" v-if="isAuthenticated"  class="button" @click="logOut">
+      <a href="#" v-if="isAuthenticated" class="button" @click="logOut">
         <span class="material-icons">account_circle</span>
         <span class="text">Cerrar Sesion</span>
       </a>
@@ -71,69 +89,86 @@
       </router-link>
     </div>
 
-
     <div class="flex"></div>
   </aside>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-import logoURL from "../assets/logo.png";
-import { useRouter } from "vue-router";
+//========================================================//
+//Imports de Recursos
+//========================================================//
+
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router"; //Utilizado para manejar las rutas en el sidebar
 import { createClient } from "@supabase/supabase-js";
 
+//========================================================//
+//Variables de Estado
+//========================================================//
 
-const userStatus=ref(sessionStorage.getItem('userRol'));
-console.log(userStatus.value);
-//========================================================
+const userStatus = ref(sessionStorage.getItem("userRol"));
+
+
+//========================================================//
 //Variables de Supabase
-
+//========================================================//
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-
-//========================================================
-
-
+//========================================================//
+//Variable de Datos
+//========================================================//
 
 const router = useRouter();
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true");
 
+//========================================================//
+//Methods
+//========================================================//
+
+//========================================================//
+//Menu Desplegable en Aplicacion
+//========================================================//
 const ToggleMenu = () => {
   is_expanded.value = !is_expanded.value;
   localStorage.setItem("is_expanded", is_expanded.value);
 };
 
-const isAuthenticated = computed(() => !!localStorage.getItem('tokenJMV'));
+//========================================================//
+//Computed para la verificacion de token
+//========================================================//
+const isAuthenticated = computed(() => !!localStorage.getItem("tokenJMV"));
 
+//========================================================//
+//Funcion de LogOut del Uusario
+//========================================================//
+const logOut = async () => {
+  localStorage.removeItem("tokenJMV");
+  sessionStorage.removeItem("userRol");
+  console.log("se borro", sessionStorage.getItem("userRol"));
 
-const logOut=async ()=>{
-  
-  localStorage.removeItem('tokenJMV');
-  sessionStorage.removeItem('userRol');
-  console.log("se borro", sessionStorage.getItem('userRol'));
-
-  const { error } = await supabase.auth.signOut()
+  const { error } = await supabase.auth.signOut();
 
   setTimeout(() => {
-            router.push({ path: '/' }).then(() => {
-            window.location.reload();
-          });
-          }, 500);
-
-}
-
+    router.push({ path: "/" }).then(() => {
+      window.location.reload();
+    });
+  }, 500);
+};
 </script>
 
 <style lang="scss" scoped>
 aside {
+  
   display: flex;
   flex-direction: column;
   width: calc(2rem + 32px);
   min-height: 100vh;
+  height: 110%;
   overflow: hidden;
   padding: 1rem;
+  border-radius: 0 0 20px 0 ;
 
   background-color: var(--superdarkblue);
   color: var(--light);
@@ -149,7 +184,6 @@ aside {
 
     img {
       width: 1.8rem;
-      
     }
   }
 
@@ -160,7 +194,7 @@ aside {
 
   .menu-toggle-wrap {
     margin-bottom: 0.4rem;
-
+    
     position: relative;
     top: 0;
     transition: 0.2s ease-in-out;
@@ -202,7 +236,6 @@ aside {
       display: flex;
       align-items: center;
       text-decoration: none;
-
       transition: 0.2s ease-in-out;
       padding: 0.7rem 1rem;
 

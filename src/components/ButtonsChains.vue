@@ -1,38 +1,73 @@
 <template>
-  <main class="mainContainer">
     <div class="buttonChains">
-      <router-link to="/ajustes" class="circleContainer">
+      <router-link to="/actividadesInfo" class="circleContainer">
         <img
           class="circleButton"
-          src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/500_333.jpeg"
+          :src="actividades"
           alt=""
         />
         <span id="circleSpanButton" class="text">Actividades</span>
       </router-link>
 
-      <router-link to="/ajustes" class="circleContainer">
+      <router-link to="/comunidadesInfo" class="circleContainer">
         <img
           class="circleButton"
-          src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/500_333.jpeg"
+          :src="comunidades"
           alt=""
         />
+      
+        
         <span id="circleSpanButton" class="text">Comunidades</span>
       </router-link>
 
-      <router-link to="/ajustes" class="circleContainer">
+      <router-link to="/vocaliasInfo" class="circleContainer">
         <img
           class="circleButton"
-          src="https://i.blogs.es/8eaa43/goku-day-dragon-ball/500_333.jpeg"
+          :src="vocalias"
           alt=""
         />
         <span id="circleSpanButton" class="text">Vocalias</span>
       </router-link>
     </div>
-  </main>
 </template>
 
-<script>
-export default {};
+<script setup>
+//========================================================//
+//Imports de Recursos
+//========================================================//
+import { ref, onMounted } from "vue";
+import { createClient } from "@supabase/supabase-js";
+
+//========================================================//
+//Variables de Supabase
+//========================================================//
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+//========================================================//
+//Variables de Datos
+//========================================================//
+const images = ref(); //Guardar los mensajes de la DB
+const actividades=ref();
+const comunidades=ref();
+const vocalias=ref();
+
+//========================================================//
+//Mounted
+//========================================================//
+onMounted(async () => {
+  const { data: dataImage} = await supabase
+    .from("imagenbotonorden")
+    .select("*");
+
+  images.value = dataImage;
+
+  actividades.value=images.value[0].linkImagen;
+  comunidades.value=images.value[1].linkImagen;
+  vocalias.value=images.value[2].linkImagen;
+  
+});
 </script>
 
 <style>
@@ -60,10 +95,12 @@ export default {};
   width: 100px;
   height: 100px;
   object-fit: cover;
+  transition: transform 0.3s;
 }
 
 .circleButton:hover {
-  filter: hue-rotate(100%);
+  transform: scale(1.1); 
+
 }
 
 #circleSpanButton {

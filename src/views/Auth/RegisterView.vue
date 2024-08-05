@@ -13,8 +13,8 @@
             :class="{ 'p-invalid': submitted && !registerUser.nombresUsuario }"
             required="true"
           />
-          <label for="name" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? "Nombres son requeridos" : "Nombres" }}
+          <label for="name" :class="{ 'p-error': submitted && !registerUser.nombreUsuario }">
+            {{ submitted && !registerUser.nombreUsuario ? "Nombres son requeridos" : "Nombres" }}
           </label>
         </FloatLabel>
       </div>
@@ -30,9 +30,9 @@
               'p-invalid': submitted && !registerUser.apellidosUsuario,
             }"
           />
-          <label for="lastname" :class="{ 'p-error': submitted && !password }">
+          <label for="lastname" :class="{ 'p-error': submitted && !registerUser.apellidosUsuario}">
             {{
-              submitted && !password ? "Apellidos son requerido" : "Apellidos"
+              submitted && !registerUser.apellidosUsuario ? "Apellidos son requerido" : "Apellidos"
             }}
           </label>
         </FloatLabel>
@@ -49,9 +49,9 @@
             :class="{ 'p-invalid': submitted && !registerUser.correoUsuario }"
             icon="mail"
           />
-          <label for="email" :class="{ 'p-error': submitted && !password }">
+          <label for="email" :class="{ 'p-error': submitted && !registerUser.correoUsuario}">
             {{
-              submitted && !password
+              submitted && !registerUser.correoUsuario
                 ? "Correo Electronico es requerido"
                 : "Correo Electronico"
             }}
@@ -68,8 +68,8 @@
             required="true"
             :class="{ 'p-invalid': submitted && !registerUser.telefonoUsuario }"
           />
-          <label for="phone" :class="{ 'p-error': submitted && !password }">
-            {{ submitted && !password ? "Telefono es requerido" : "Telefono" }}
+          <label for="phone" :class="{ 'p-error': submitted && !registerUser.telefonoUsuario  }">
+            {{ submitted && !registerUser.telefonoUsuario  ? "Telefono es requerido" : "Telefono" }}
           </label>
         </FloatLabel>
       </div>
@@ -201,6 +201,7 @@
 .buttonSend {
   margin: 3px 0;
   background-color: var(--darkblue);
+  border: none;
 }
 
 .buttonSend:hover {
@@ -210,20 +211,87 @@
 .buttonSend:active {
   background-color: var(--darkblue);
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #containerRegister {
+    width: 80%;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .block {
+    height: 50px;
+    margin: 8px 0;
+  }
+
+  .inputsLogin {
+    height: 35px;
+  }
+
+  .linksLogin, .linksForget {
+    margin: 10px;
+  }
+
+  .FloatLabel {
+    height: 20px;
+  }
+
+  .buttonSend {
+    margin: 2px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  #containerRegister {
+    width: 90%;
+    padding: 0.5rem;
+  }
+
+  .block {
+    height: 45px;
+    margin: 6px 0;
+  }
+
+  .inputsLogin {
+    height: 30px;
+  }
+
+  .linksLogin, .linksForget {
+    margin: 8px;
+  }
+
+  .FloatLabel {
+    height: 18px;
+  }
+
+  .buttonSend {
+    margin: 1px 0;
+  }
+}
 </style>
 
 <script setup>
+//========================================================
+//Imports de Recursos
+//========================================================
 import { onMounted, ref } from "vue";
 import { createClient } from "@supabase/supabase-js";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from 'vue-router';
 
+//========================================================
 //Variables de Supabase
+//========================================================
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+//========================================================
 //Variables y funciones Toast
+//========================================================
+
 const toast = useToast();
 const onUpload = () => {
   toast.add({
@@ -234,28 +302,36 @@ const onUpload = () => {
   });
 };
 
+//========================================================
 //Variables de Datos
+//========================================================
 
 const registerUser = ref({});
 const password = ref();
 const communities = ref();
 const router=useRouter();
 
+//========================================================
 //Variables de Estados
+//========================================================
 const submitted = ref(false);
 const loading=ref(false);
 
-//Mounted
+//========================================================
+//OnMounted
+//========================================================
 
 onMounted(async () => {
   const data = await supabase.from("Comunidad").select("*");
 
   communities.value = data.data;
-  console.log(communities.value);
 });
 
-//Funciones
+//========================================================
+//Methods
+//========================================================
 
+//FUncion para guardar registro
 const SaveRegister = async () => {
   submitted.value = true;
   
@@ -351,11 +427,13 @@ const SaveRegister = async () => {
   }
 };
 
+//Funcion para validar email
 const validateEmail = (email) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 };
 
+//Funcion para añadir usuario creado con sus credenciales a la tabla Usuarios
 const addUser = async () => {
   registerUser.value.idRolUsuario = 2;
 

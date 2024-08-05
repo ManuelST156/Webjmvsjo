@@ -7,9 +7,8 @@
       </h2>
 
       <!--========================================================-->
-        <!--Selección de Foto y Vacantes-->
+      <!--Selección de Foto y Vacantes-->
       <!--========================================================-->
-
 
       <div class="firstGroup">
         <div class="pruebaImg">
@@ -54,7 +53,6 @@
         </div>
 
         <!--========================================================-->
-
 
         <!--========================================================-->
         <!--Datos Generales-->
@@ -274,7 +272,7 @@
           </FloatLabel>
         </div>
 
-         <!--========================================================-->
+        <!--========================================================-->
 
         <!--========================================================-->
         <!--Formacion Academica-->
@@ -285,7 +283,7 @@
           <Divider class="Divider" type="solid" />
         </div>
 
-        <div class="fullLine">
+        <div class="fullLine" id="Table">
           <DataTable :value="allAcademic">
             <Column
               style="min-width: 12rem"
@@ -341,13 +339,13 @@
           <Button
             class="buttonSend"
             label="Agregar Formacion Academica"
-            @click="(visibleAcademicDialog = true), (academicBackground={});"
+            @click="(visibleAcademicDialog = true), (academicBackground = {})"
           />
-          <Dialog
+          <Dialog class="w-6"
             v-model:visible="visibleAcademicDialog"
             modal
             header="Formación Académica"
-            :style="{ width: '50vw', height: '25vw' }"
+            
           >
             <div class="block">
               <FloatLabel class="FloatLabel">
@@ -628,7 +626,7 @@
           <Divider class="Divider" type="solid" />
         </div>
 
-        <div class="fullLine">
+        <div class="fullLine" id="Table">
           <DataTable :value="allServices">
             <Column
               style="min-width: 12rem"
@@ -678,18 +676,18 @@
           </DataTable>
         </div>
 
-         <!--Dialog de Servicios Pastorales-->
+        <!--Dialog de Servicios Pastorales-->
         <div class="fullLine">
           <Button
             class="buttonSend"
             label="Agregar Servicios Pastorales"
-            @click="(visibleServiceDialog = true), (pastoralService={});"
+            @click="(visibleServiceDialog = true), (pastoralService = {})"
           />
           <Dialog
             v-model:visible="visibleServiceDialog"
             modal
             header="Servicios Pastorales"
-            :style="{ width: '50vw', height: '25vw' }"
+            class="w-6"
           >
             <div class="block">
               <FloatLabel class="FloatLabel">
@@ -783,15 +781,14 @@
         </div>
         <!--========================================================-->
 
-
         <!--========================================================-->
         <!-- final del div principal -->
         <!--========================================================-->
       </div>
 
-       <!--========================================================-->
-       <!--Boton para crear el registro-->
-       <!--========================================================-->
+      <!--========================================================-->
+      <!--Boton para crear el registro-->
+      <!--========================================================-->
 
       <div class="card flex justify-content-center">
         <Button
@@ -811,6 +808,8 @@
   margin: 5px 0;
   background-color: var(--darkblue);
   border: none;
+  padding: 10px 20px; // Añadido para mejorar el diseño en pantallas pequeñas
+  box-sizing: border-box; // Incluye padding y border en el ancho total
 }
 
 .buttonSend:hover {
@@ -827,13 +826,10 @@
     margin: 10px 0;
   }
 
-  .p-datatable-thead > tr > th {
-    border-color: var(--darkblue);
-    border-width: 1px 1px 1px 1px;
-  }
+  .p-datatable-thead > tr > th,
   .p-datatable-tbody > tr > td {
     border-color: var(--darkblue);
-    border-width: 1px 1px 1px 1px;
+    border-width: 1px;
   }
 }
 
@@ -857,8 +853,9 @@
 }
 
 #imageUpload {
-  width: 230px;
-  height: 230px;
+  width: 100%; // Cambiado a 100% para responsividad
+  max-width: 230px; // Ancho máximo para evitar que se agrande demasiado en pantallas grandes
+  height: auto; // Ajustado para mantener la proporción
   background-color: lightgray;
   margin-bottom: 30px;
   border-radius: 10px;
@@ -870,6 +867,7 @@
   justify-content: center;
   align-items: center;
   height: auto;
+  box-sizing: border-box;
 }
 
 .fullLine {
@@ -884,12 +882,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 70%;
+  width: 80%; // Ajustado para adaptarse a diferentes tamaños de pantalla
+  max-width: 800px; // Ancho máximo para pantallas grandes
   height: auto;
+  box-sizing: border-box; // Incluye padding y border en el ancho total
+  overflow: hidden; // Evita el desbordamiento del contenedor
+  margin-left: 0; // Asegura que el contenedor se alinee con el contenido principal
 }
 
 #Tittle {
-  /* align-self: center; */
   margin-bottom: 20px;
   margin-top: 0;
 }
@@ -900,22 +901,25 @@
   margin: 10px 0;
   flex: 1 1 calc(50% - 20px);
   min-width: 200px;
+  box-sizing: border-box;
 }
 
-.blockUpload{
-  width: 75%;
+.blockUpload {
+  width: 100%; // Cambiado a 100% para responsividad
+  max-width: 300px; // Ancho máximo para pantallas grandes
   height: 60px;
   margin: 10px 0;
-  /* flex: 1 1 calc(20% - 20px); */
   min-width: 20px;
+  box-sizing: border-box;
 }
 
 .pruebaImg {
   width: 100%;
-  height: 200px;
+  height: auto; // Ajustado para mantener la proporción
   margin: 10px 0;
   flex: 1 1 calc(50% - 20px);
   min-width: 200px;
+  box-sizing: border-box;
 }
 
 .firstGroup {
@@ -929,6 +933,7 @@
   height: 40px;
   margin-bottom: 4rem;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .textLogin {
@@ -936,6 +941,7 @@
   margin-bottom: 4rem;
   width: 100%;
   resize: none;
+  box-sizing: border-box;
 }
 
 .fullLineText {
@@ -960,7 +966,8 @@ input[type="file"] {
   background-color: var(--darkblue);
   height: 40px;
   margin-bottom: 4rem;
-  width: 35%;
+  width: 100%; // Cambiado a 100% para responsividad
+  max-width: 300px; // Ancho máximo para pantallas grandes
   border: none;
   color: white;
   padding: 10px 20px;
@@ -971,6 +978,7 @@ input[type="file"] {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+  box-sizing: border-box;
 }
 
 .labelFile:hover {
@@ -980,10 +988,94 @@ input[type="file"] {
 .labelFile:active {
   background-color: var(--darkblue);
 }
+
+// Media Queries
+@media (max-width: 768px) {
+  #containerRegister {
+    width: 95%;
+    padding: 1rem;
+    margin-left: 0; // Asegura que el formulario no quede oculto bajo el sidebar
+  }
+
+  .buttonSend {
+    padding: 8px 16px;
+  }
+
+  .labelFile {
+    font-size: 18px;
+  }
+
+  .icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  #containerRegister {
+    padding: 0.5rem;
+    margin-left: 0rem; // Asegura que el formulario no quede oculto bajo el sidebar
+    width: 70%; // Ajustado para adaptarse a diferentes tamaños de pantalla
+    align-items: normal;
+    height: auto;
+  }
+
+  .buttonSend {
+    padding: 6px 12px;
+  }
+
+  .labelFile {
+    font-size: 16px;
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+
+  .pruebaImg {
+    height: auto; // Ajustado para mantener la proporción en pantallas pequeñas
+  }
+
+  ::v-deep(.p-datatable) {
+    .p-datatable-table {
+      font-size: 12px; /* Ajusta el tamaño de la fuente de toda la tabla */
+      
+    }
+
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 6px; /* Ajusta el relleno de las celdas */
+    }
+
+    .p-datatable-thead > tr > th {
+      font-size: 14px; /* Ajusta el tamaño de la fuente de los encabezados */
+    }
+
+    /* Ajusta el ancho de las columnas */
+    .p-datatable-table colgroup col:nth-child(1) {
+      width: 30%; /* Ancho de la primera columna */
+    }
+
+    .p-datatable-table colgroup col:nth-child(2) {
+      width: 30%; /* Ancho de la segunda columna */
+    }
+
+    .p-datatable-table colgroup col:nth-child(3) {
+      width: 40%; /* Ancho de la tercera columna */
+    }
+  }
+
+  #Table {
+    overflow: auto; /* Permite el desplazamiento horizontal si es necesario */
+  }
+
+
+
+}
 </style>
 
-<script setup>
 
+
+<script setup>
 //========================================================
 //Imports de Modulos
 //========================================================
@@ -996,41 +1088,41 @@ import { jwtDecode } from "jwt-decode";
 
 //========================================================
 //Variables de Supabase
+//========================================================
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 
-//========================================================
-
 
 //========================================================
 //Variables de Toast
+//========================================================
 
 const toast = useToast();
-//========================================================
+
 
 //========================================================
 //Variable de JWT para manejo de tokens
 /* const jwt_decode = require('jwt-decode'); */
 //========================================================
 
-
 //========================================================
 //Variables de estado
+//========================================================
 
 const submitted = ref(false);
 const visibleAcademicDialog = ref(false);
 const visibleServiceDialog = ref(false);
-const loading=ref(false);
-const isEditing=ref(false);
+const loading = ref(false);
+const isEditing = ref(false);
 
-//========================================================
+
 
 //========================================================
 //Variables de datos
-
+//========================================================
 
 //Objetos
 const vacancyRequest = ref({});
@@ -1044,9 +1136,8 @@ const vacancyList = ref([]);
 const comunityList = ref([]);
 const usersList = ref([]);
 const formationStageList = ref([]);
-const academicDeleted=ref([]);
-const servicesDeleted=ref([]);
-
+const academicDeleted = ref([]);
+const servicesDeleted = ref([]);
 
 //Variables Primitivas
 const catechistName = ref();
@@ -1054,8 +1145,7 @@ const formationStage = ref();
 const fileUpload = ref(null); //Variable para la imagen
 const isEditAcademic = ref(false);
 const isEditService = ref(false);
-const getRequestID=ref();
-
+const getRequestID = ref();
 
 //Variable Array con Datos Predefinidos
 const civilStatus = ref([
@@ -1091,275 +1181,208 @@ const sacraments = ref([
 
 
 //========================================================
-
-//========================================================
 //Mounted
+//========================================================
 
 onMounted(async () => {
-
-  /* const utcDate = new Date('2024-07-25T03:37:40.086054Z');
-  const localDate = new Date(utcDate.toLocaleString('en-US', { timeZone: 'America/Santo_Domingo' })); */
-
-/* console.log(localDate.toString()); */
   let vacancyGet = await supabase.from("Vocalias").select("*");
 
   let comunityGet = await supabase.from("datoscompletocomunidad").select("*");
 
-  /* let usersGet = await supabase.from("Usuarios").select("*"); */
-
-  /* let formationStageGet = await supabase.from("EtapaFormacion").select("*"); */
 
   vacancyList.value = vacancyGet.data;
   comunityList.value = comunityGet.data;
 
-  /* usersList.value = usersGet.data; */
-  /* formationStageList.value = formationStageGet.data; */
+  if (localStorage.getItem("isEditing")) {
+    getRequestID.value = localStorage.getItem("isEditing");
 
-  console.log(vacancyList.value);
-  console.log(comunityList.value);
-
-
-  if(localStorage.getItem('isEditing'))
-  {
-    getRequestID.value= localStorage.getItem("isEditing");
-    console.log(getRequestID.value);
-
-    const requestGet= await supabase
+    const requestGet = await supabase
       .from("Solicitudes")
       .select("*")
-      .eq('idSolicitud', getRequestID.value);
+      .eq("idSolicitud", getRequestID.value);
 
-      console.log(requestGet);
 
-    
-    const requestServicesGet= await supabase
+    const requestServicesGet = await supabase
       .from("obtenerservicios")
       .select("*")
-      .eq('idSolicitud',getRequestID.value);
+      .eq("idSolicitud", getRequestID.value);
 
-  
+    const requestAcademicGet = await supabase
+      .from("obtenerformacionacademica")
+      .select("*")
+      .eq("idSolicitud", getRequestID.value);
 
-    const requestAcademicGet= await supabase
-    .from("obtenerformacionacademica")
-    .select("*")
-    .eq('idSolicitud',getRequestID.value);
-    
-    console.log(requestServicesGet,requestAcademicGet);
 
-    vacancyRequest.value=requestGet.data[0];
-    vacancyRequest.value.sacramentosSolicitante=vacancyRequest.value.sacramentosSolicitante.split(',');
-    console.log(vacancyRequest.value.sacramentosSolicitante);
+    vacancyRequest.value = requestGet.data[0];
+    vacancyRequest.value.sacramentosSolicitante =
+      vacancyRequest.value.sacramentosSolicitante.split(",");
 
-    
-    requestAcademicGet.data.forEach(element => {
-      const {idSolicitud, ...newObject} =element;
+    requestAcademicGet.data.forEach((element) => {
+      const { idSolicitud, ...newObject } = element;
 
       allAcademic.value.push(newObject);
     });
-    console.log(allAcademic.value);
 
-    requestServicesGet.data.forEach(element => {
-      console.log(element);
-      const {idSolicitud, ...newObject} =element;
+    requestServicesGet.data.forEach((element) => {
+      const { idSolicitud, ...newObject } = element;
       allServices.value.push(newObject);
     });
 
-    console.log(allServices.value);
 
-    console.log(vacancyRequest.value);
-    document.getElementById("imageUpload").src=vacancyRequest.value.imagenURL;
-    isEditing.value=!!localStorage.getItem("isEditing");
-    console.log(isEditing.value);
+    document.getElementById("imageUpload").src = vacancyRequest.value.imagenURL;
+    isEditing.value = !!localStorage.getItem("isEditing");
     localStorage.removeItem("isEditing");
   }
-
 });
 
-//========================================================
 
 
 //========================================================
 //Methods
-
+//========================================================
 
 //Metodo para Guardar Solicitudes
 const saveVacancy = async () => {
-
-  
   try {
-      loading.value=true;
-      submitted.value = true;
+    loading.value = true;
+    submitted.value = true;
 
-    if(fileUpload.value!=null)
-    {
-
+    //Si Encontramos imagen la sube a un bucket y luego obtiene su url
+    if (fileUpload.value != null) {
       const Upload = fileUpload.value;
 
-
       if (Upload.files.length > 0) {
-            const imagen = Upload.files[0];
-            console.log(imagen);
-            var nombreImagen = vacancyRequest.value.nombresSolicitante +"-"+"requestImage-"+uid(16).toString();
+        const imagen = Upload.files[0];
+        var nombreImagen =
+          vacancyRequest.value.nombresSolicitante +
+          "-" +
+          "requestImage-" +
+          uid(16).toString();
 
-            const subirStorage = await supabase.storage
-              .from("imageVacancy")
-              .upload(nombreImagen, imagen);
+        const subirStorage = await supabase.storage
+          .from("imageVacancy")
+          .upload(nombreImagen, imagen);
 
-            const urlDescargar = supabase.storage
-              .from("imageVacancy")
-              .getPublicUrl(nombreImagen);
+        const urlDescargar = supabase.storage
+          .from("imageVacancy")
+          .getPublicUrl(nombreImagen);
 
-            vacancyRequest.value.imagenURL=urlDescargar.data.publicUrl;
+        vacancyRequest.value.imagenURL = urlDescargar.data.publicUrl;
       }
-
-
     }
 
+    vacancyRequest.value.sacramentosSolicitante =
+      vacancyRequest.value.sacramentosSolicitante.join(",");
 
-    vacancyRequest.value.sacramentosSolicitante=vacancyRequest.value.sacramentosSolicitante.join(',');
+    const { error, data } = await supabase
+      .from("Solicitudes")
+      .upsert(vacancyRequest.value)
+      .select();
 
-    const {error,data}= await supabase
-    .from('Solicitudes')
-    .upsert(vacancyRequest.value)
-    .select()
+    const requestID = data[0].idSolicitud;
 
-    const requestID=data[0].idSolicitud;
+    //Agregamos los datos de Formacion a su tabla en la DB
+    if (allAcademic.value.length != 0) {
+      allAcademic.value.forEach(async (element) => {
+        if (Number.isInteger(element.idFormacionAcademica)) {
+          if (academicDeleted.value.length != 0) {
+            academicDeleted.value.forEach(async (element) => {
+              const { data: deleteDataAcademicRequest } = await supabase
+                .from("FormacionAcademicaSolicitud")
+                .delete()
+                .eq("idFormacionAcademica", element.idFormacionAcademica);
 
+              const { data: deleteDataAcademic } = await supabase
+                .from("FormacionAcademica")
+                .delete()
+                .eq("idFormacionAcademica", element.idFormacionAcademica);
+            });
+          }
 
-   
-    if(allAcademic.value.length!=0)
-    {
-      allAcademic.value.forEach(async element => {
+          const { error, data } = await supabase
+            .from("FormacionAcademica")
+            .upsert(element)
+            .select();
+        } else {
+          const { idFormacionAcademica, ...newObject } = element;
+          const { error, data } = await supabase
+            .from("FormacionAcademica")
+            .upsert(newObject)
+            .select();
 
-      if(Number.isInteger(element.idFormacionAcademica))
-      {
-        if(academicDeleted.value.length!=0)
-        {
-          academicDeleted.value.forEach( async element=>{
+          const bridgeTable = {
+            idSolicitud: getRequestID.value,
+            idFormacionAcademica: data[0].idFormacionAcademica,
+          };
 
-          const {data:deleteDataAcademicRequest}= await supabase
-          .from("FormacionAcademicaSolicitud")
-          .delete()
-          .eq('idFormacionAcademica',element.idFormacionAcademica);
-
-
-          const {data:deleteDataAcademic}= await supabase
-          .from("FormacionAcademica")
-          .delete()
-          .eq('idFormacionAcademica',element.idFormacionAcademica);
-
-          
-
-          });
+          const uploadAcademicBackgroud = await supabase
+            .from("FormacionAcademicaSolicitud")
+            .upsert(bridgeTable)
+            .select();
         }
-
-
-        const {error,data}= await supabase.from("FormacionAcademica").upsert(element).select();
-        console.log(data);
-      }
-      else
-      {
-        const {idFormacionAcademica, ...newObject} =element;
-        const {error,data}= await supabase.from("FormacionAcademica").upsert(newObject).select();
-        console.log(data);
-
-
-        const bridgeTable=
-        {
-          idSolicitud: getRequestID.value, 
-          idFormacionAcademica:data[0].idFormacionAcademica
-        };
-
-        const uploadAcademicBackgroud=await supabase
-        .from("FormacionAcademicaSolicitud")
-        .upsert(bridgeTable)
-        .select();
-      }
-      }); 
-    }
-      
-    if(allServices.value.length!=0)
-    {
-      allServices.value.forEach(async element=>{
-
-
-      if(Number.isInteger(element.idServicio)){
-
-        if(servicesDeleted.value.length!=0)
-        {
-          servicesDeleted.value.forEach( async element=>{
-
-
-          const {data:deleteDataServicesRequest}= await supabase
-          .from("ServiciosSolicitud")
-          .delete()
-          .eq('idServicio',element.idServicio);
-
-
-          const {data:deleteDataServices}= await supabase
-          .from("Servicios")
-          .delete()
-          .eq('idServicio',element.idServicio);
-
-          
-
-          });
-        }
-        
-
-        const {error,data}= await supabase.from("Servicios").upsert(element).select();
-        console.log(element); 
-      }
-      else
-      {
-        const {idServicio, ...newObject} =element;
-        const {error,data}= await supabase.from("Servicios").upsert(newObject).select();
-        console.log(data);
-
-        const bridgeTable=
-        {
-          idSolicitud: getRequestID.value, 
-          idServicio:data[0].idServicio
-        };
-
-        const uploadPastoralServices=await supabase
-          .from("ServiciosSolicitud")
-          .upsert(bridgeTable)
-          .select();
-      }
       });
     }
-   
+    //Agregamos los datos de Formacion a su tabla en la DB
+    if (allServices.value.length != 0) {
+      allServices.value.forEach(async (element) => {
+        if (Number.isInteger(element.idServicio)) {
+          if (servicesDeleted.value.length != 0) {
+            servicesDeleted.value.forEach(async (element) => {
+              const { data: deleteDataServicesRequest } = await supabase
+                .from("ServiciosSolicitud")
+                .delete()
+                .eq("idServicio", element.idServicio);
 
-      
+              const { data: deleteDataServices } = await supabase
+                .from("Servicios")
+                .delete()
+                .eq("idServicio", element.idServicio);
+            });
+          }
 
-      if(!isEditing.value){
+          const { error, data } = await supabase
+            .from("Servicios")
+            .upsert(element)
+            .select();
+        } else {
+          const { idServicio, ...newObject } = element;
+          const { error, data } = await supabase
+            .from("Servicios")
+            .upsert(newObject)
+            .select();
+          
 
-        
-      const { data: listAuthUsers} = await supabase
-      .from('Usuarios')
-      .select('idUsuario')
-      .eq('idAuth', decodeToken());
+          const bridgeTable = {
+            idSolicitud: getRequestID.value,
+            idServicio: data[0].idServicio,
+          };
 
-      console.log(listAuthUsers);
+          const uploadPastoralServices = await supabase
+            .from("ServiciosSolicitud")
+            .upsert(bridgeTable)
+            .select();
+        }
+      });
+    }
 
+    //Sirve para guardar los datos del usuario y la solicitud
+    if (!isEditing.value) {
+      const { data: listAuthUsers } = await supabase
+        .from("Usuarios")
+        .select("idUsuario")
+        .eq("idAuth", decodeToken());
 
-      const userRequestData=
-      {
+      const userRequestData = {
         idUsuario: listAuthUsers[0].idUsuario,
         idSolicitud: requestID,
-      }
+      };
 
-      
-      console.log(listAuthUsers);
-
-      
-      const uploadUserRequest= await supabase
+      const uploadUserRequest = await supabase
         .from("UsuarioSolicitud")
         .upsert(userRequestData)
         .select();
 
-      console.log(uploadUserRequest);
+      
 
       toast.add({
         severity: "success",
@@ -1367,51 +1390,36 @@ const saveVacancy = async () => {
         detail: "Solicitud Creada",
         life: 3000,
       });
-      }
-      else
-      {
-        toast.add({
+    } else {
+      toast.add({
         severity: "success",
         summary: "Registro Actualizado",
         detail: "Solicitud Actualizada",
         life: 3000,
-        });
-      }
+      });
+    }
 
-      
-
-      loading.value=false;
-
-
-
+    loading.value = false;
   } catch (error) {
-    
     toast.add({
       severity: "error",
-      summary: "Registro Vacio",
-      detail: "No se Agrega a la tabla",
+      summary: "TTienes Datos Vacio en el Registro",
+      detail: "Datos no Agregados Correctamente",
       life: 3000,
     });
 
-    console.log(error);
 
-    loading.value=false;
-
+    loading.value = false;
   }
-
-  
-
-
-
 };
 
 
 //Metodo para decodificar token
 const decodeToken = () => {
   try {
-    const token = localStorage.getItem('tokenJMV');
+    const token = localStorage.getItem("tokenJMV");
     if (!token) {
-      throw new Error('No token found in localStorage');
+      throw new Error("No token found in localStorage");
     }
 
     const decodedToken = jwtDecode(token);
@@ -1419,11 +1427,9 @@ const decodeToken = () => {
 
     return userID;
   } catch (error) {
-    console.error('Error decoding token:', error);
     return null;
   }
 };
-
 
 //Metodo para cargar datos Comunidades en el Dropdown al ser seleccionada
 const loadComunityData = () => {
@@ -1431,18 +1437,17 @@ const loadComunityData = () => {
     (c) => c.idComunidad === vacancyRequest.value.idComunidad
   );
 
-  console.log(getDataComunity);
+ 
 
-  formationStage.value=getDataComunity.nombreEtapa;
-  catechistName.value=getDataComunity.nombrecatequista;
-  
+  formationStage.value = getDataComunity.nombreEtapa;
+  catechistName.value = getDataComunity.nombrecatequista;
 };
 
 //Metodo para mostrar la imagen, desde que es cargada
 const onFileChange = (event) => {
-  console.log("hola llege");
+  
   fileUpload.value = event.target;
-  const file= event.target.files[0];
+  const file = event.target.files[0];
   const reader = new FileReader();
 
   reader.onload = function (e) {
@@ -1461,32 +1466,25 @@ const onFileChange = (event) => {
 
 //Funcion para Guardar Formacion Academica de Forma Temporal
 const saveAcademicBackground = () => {
-
-  console.log(academicBackground.value);
+ 
   if (
     academicBackground.value &&
     Object.keys(academicBackground.value).length > 0
   ) {
-
-
     if (academicBackground.value.idFormacionAcademica) {
-      console.log("editando");
-      allAcademic.value[findIndexById(academicBackground.value.idFormacionAcademica)] =
-        academicBackground.value;
+      allAcademic.value[
+        findIndexById(academicBackground.value.idFormacionAcademica)
+      ] = academicBackground.value;
       toast.add({
         severity: "success",
         summary: "Registro Actualizado",
         detail: "Formacion Academica Acatualizada",
         life: 3000,
       });
-      
-      
     } else {
-      console.log("que problema");
 
       academicBackground.value.idFormacionAcademica = createId();
       allAcademic.value.push(academicBackground.value);
-      console.log(allAcademic.value);
 
       toast.add({
         severity: "success",
@@ -1494,7 +1492,6 @@ const saveAcademicBackground = () => {
         detail: "Formacion Academica Agregada",
         life: 3000,
       });
-      console.log(allAcademic.value);
     }
     visibleAcademicDialog.value = false;
     academicBackground.value = {};
@@ -1502,7 +1499,7 @@ const saveAcademicBackground = () => {
     toast.add({
       severity: "error",
       summary: "Registro Vacio",
-      detail: "No se Agrega a la tabla",
+      detail: "Datos no Agregados Correctamente",
       life: 3000,
     });
   }
@@ -1510,9 +1507,9 @@ const saveAcademicBackground = () => {
 
 //Funcion para Guarda los Servicios Pastorales de Forma Temporal
 const savePastoralServices = () => {
-  console.log(pastoralService.value);
+  
   if (pastoralService.value && Object.keys(pastoralService.value).length > 0) {
-    console.log(pastoralService.value);
+   
     if (pastoralService.value.idServicio) {
       allServices.value[findIndexById(pastoralService.value.idServicio)] =
         pastoralService.value;
@@ -1556,16 +1553,16 @@ const editAcademic = (prod) => {
 const deleteAcademic = (prod) => {
   academicBackground.value = prod;
 
-  const toDelete=allAcademic.value.filter(
-    (val) => val.idFormacionAcademica == academicBackground.value.idFormacionAcademica
+  const toDelete = allAcademic.value.filter(
+    (val) =>
+      val.idFormacionAcademica == academicBackground.value.idFormacionAcademica
   );
-
 
   academicDeleted.value.push(toDelete[0]);
 
-
   allAcademic.value = allAcademic.value.filter(
-    (val) => val.idFormacionAcademica !== academicBackground.value.idFormacionAcademica
+    (val) =>
+      val.idFormacionAcademica !== academicBackground.value.idFormacionAcademica
   );
 
   academicBackground.value = {};
@@ -1589,11 +1586,10 @@ const editService = (prod) => {
 const deleteService = (prod) => {
   pastoralService.value = prod;
 
-  const toDelete=allServices.value.filter(
+  const toDelete = allServices.value.filter(
     (val) => val.idServicio == pastoralService.value.idServicio
   );
   servicesDeleted.value.push(toDelete[0]);
-  console.log(servicesDeleted.value);
 
   allServices.value = allServices.value.filter(
     (val) => val.idServicio !== pastoralService.value.idServicio
@@ -1606,7 +1602,6 @@ const deleteService = (prod) => {
     life: 3000,
   });
 };
-
 
 //Funcion para Encontrar el ID para Editar
 const findIndexById = (id) => {
@@ -1633,7 +1628,6 @@ const findIndexById = (id) => {
   }
 };
 
-
 //Funcion para Crear ID para los Objetos de las Tablas
 const createId = () => {
   let id = "";
@@ -1643,5 +1637,5 @@ const createId = () => {
   }
   return id;
 };
-//========================================================
+
 </script>

@@ -1,22 +1,80 @@
-
 <template>
-    <main>
-      <div class="card flex justify-content-center">
-        <AutoComplete v-model="value" dropdown :suggestions="items" @complete="search" />
+  <main>
+    <div class="not-found">
+      <div>
+        <img src="@/assets/inProcess.gif" alt="">
       </div>
-    </main>
+      <h1>Esta pagina estará disponible en futuras Versiones</h1>
+      <div class="card flex justify-content-center">
+          <Button
+            class="buttonSend"
+            label="Regresar A la Pantalla de Inicio"
+            @click="toHome"
+            
+          />
+        </div>
+    </div>
+   </main>  
   </template>
   
   <script setup>
-  import { ref } from "vue";
+  //========================================================
+  //Imports de Dependencias
+  //========================================================
+  import { useRouter } from "vue-router";
   
-  const value = ref("");
-  const items = ref([]);
+  //========================================================
+  //Variable que contiene el router
+  //========================================================
+  const router = useRouter();
   
-  const search = (event) => {
-    let _items = [...Array(10).keys()];
+  //========================================================
+  //Metodo para volver al home
+  //========================================================
   
-    items.value = event.query ? [...Array(10).keys()].map((item) => event.query + '-' + item) : _items;
-  }
+  const toHome = () => {
+    router.push({ path: "/" }).then(() => {
+      window.location.reload();
+    });
+  };
   </script>
+  
+  <style scoped>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .not-found h1 {
+    font-size: 3rem;
+    color: var(--lightgrey);
+    width: 100%;
+    margin: 0px 0 15px  ;
+  }
+  
+  img{
+    width: 350px;
+    height: 350px;
+  }
+  
+  .buttonSend {
+    margin: 3px 0;
+    background-color: var(--darkblue);
+    width: 270px;
+    height: 50px;
+    border: none;
+  }
+  
+  .buttonSend:hover {
+    background-color: var(--lightcyan);
+  }
+  
+  .buttonSend:active {
+    background-color: var(--darkblue);
+  }
+  </style>
   

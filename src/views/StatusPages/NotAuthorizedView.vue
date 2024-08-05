@@ -2,12 +2,9 @@
     <main>
       <div class="not-found">
         <div>
-          <img src="@/assets/404Gif.gif" alt="">
-          <!-- <video autoplay loop muted class="loading">
-                 <source src="/src/assets/404Gift.gif" type="video/mp4" alt="">
-          </video> -->
+          <img src="@/assets/notAuthorized.gif" alt="">
         </div>
-        <h1>Esta pagina no puede ser encontrada</h1>
+        <h1>Usted No esta Autorizado para ingresar a esta pestaña</h1>
         <div class="card flex justify-content-center">
             <Button
               class="buttonSend"

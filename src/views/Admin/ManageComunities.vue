@@ -6,7 +6,9 @@
     <Button
       class="buttonSend"
       label="Agregar Comunidad"
-      @click="(visibleComunityDialog = true), (comunity = {}), (catechistID = [])"
+      @click="
+        (visibleComunityDialog = true), (comunity = {}), (catechistID = [])
+      "
     />
 
     <div class="fullLine">
@@ -64,7 +66,7 @@
         v-model:visible="visibleComunityDialog"
         modal
         header="Comunidad"
-        :style="{ width: '40vw', height: '25vw' }"
+        class="w-6"
       >
         <div class="block">
           <FloatLabel class="FloatLabel">
@@ -170,7 +172,7 @@
         v-model:visible="visibleComunityDeleteDialog"
         modal
         header="Usuario"
-        :style="{ width: '20vw', height: '13vw' }"
+        class="w-3"
       >
         <p>Desea eliminar este usuario?</p>
 
@@ -196,7 +198,7 @@
 
 <script setup>
 //========================================================
-//Imports de Modulos
+//Imports de Recursos
 //========================================================
 import { ref, onMounted } from "vue";
 import { useToast } from "primevue/usetoast";
@@ -206,21 +208,21 @@ import router from "@/router";
 
 //========================================================
 //Variables de Supabase
+//========================================================
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseSecretKey = import.meta.env.VITE_SUPABASE_SECRET_KEY;
 const supabase = createClient(supabaseUrl, supabaseSecretKey);
 
 //========================================================
-
-//========================================================
 //Variables de Toast
+//========================================================
 
 const toast = useToast();
-//========================================================
 
 //========================================================
 //Variables de estado
+//========================================================
 
 const submitted = ref(false);
 const visibleComunityDialog = ref(false);
@@ -228,14 +230,17 @@ const loading = ref(false);
 const visibleComunityDeleteDialog = ref(false);
 
 //========================================================
+//Variables de datos
+//========================================================
 
 //========================================================
-//Variables de datos
-
-//Objetos
+//Variables de Objetos
+//========================================================
 const comunity = ref({});
 
-//Primarias
+//========================================================
+//Variables Primarias
+//========================================================
 const isEditComunity = ref(false);
 const communities = ref();
 const formationStage = ref();
@@ -244,9 +249,8 @@ const catechistID = ref([]);
 const forSearchCatechist = ref();
 
 //========================================================
-
-//========================================================
 //Mounted
+//========================================================
 
 onMounted(async () => {
   await updateTable();
@@ -264,9 +268,8 @@ onMounted(async () => {
 });
 
 //========================================================
-
-//========================================================
 //Methods
+//========================================================
 
 //Funcion para Guardar Formacion Academica de Forma Temporal
 const saveNewComunity = async () => {
@@ -278,7 +281,6 @@ const saveNewComunity = async () => {
       finded = forSearchCatechist.value.find(
         (elementSearch) => elementSearch.idCatequista == element
       );
-      console.log(finded);
     });
 
     if (finded != undefined && isEditComunity.value == false) {
@@ -291,7 +293,6 @@ const saveNewComunity = async () => {
     } else {
       const { nombreEtapa, nombrecatequista, ...newObject } = comunity.value;
 
-      console.log(newObject);
       const { data: createComunity, error: createErrorComunity } =
         await supabase.from("Comunidad").upsert(newObject).select();
 
@@ -304,16 +305,13 @@ const saveNewComunity = async () => {
           .from("ComunidadCatequista")
           .delete()
           .eq("idComunidad", sendData.idComunidad);
-        
-      
+
         const { data: createComunitycatechist, error: createErrorCC } =
           await supabase.from("ComunidadCatequista").upsert(sendData).select();
 
-          if(!createErrorCC)
-        {
+        if (!createErrorCC) {
           await updateTable();
         }
-       
       });
 
       if (isEditComunity.value == true) {
@@ -323,8 +321,6 @@ const saveNewComunity = async () => {
           detail: "Registro Actualizado",
           life: 3000,
         });
-        
-      
       } else {
         toast.add({
           severity: "success",
@@ -332,16 +328,11 @@ const saveNewComunity = async () => {
           detail: "Registro Completado",
           life: 3000,
         });
-
       }
     }
-    
-    
 
     isEditComunity.value = false;
     visibleComunityDialog.value = false;
-
-
   } catch (error) {
     toast.add({
       severity: "error",
@@ -352,14 +343,13 @@ const saveNewComunity = async () => {
   }
 };
 
-
-const updateTable=async ()=>{
+//Funcion para cargar los datos actualizados
+const updateTable = async () => {
   const { data: dataComunity, error: fetchError } = await supabase
-      .from("datoscompletocomunidad")
-      .select("*");
-      communities.value = dataComunity;
-      console.log(dataComunity);
-}
+    .from("datoscompletocomunidad")
+    .select("*");
+  communities.value = dataComunity;
+};
 //Funcion para Editar Datos de Formacion Academica
 const editComunity = (prod) => {
   comunity.value = { ...prod };
@@ -370,21 +360,19 @@ const editComunity = (prod) => {
   );
   finded.forEach((element) => {
     catechistID.value.push(element.idCatequista);
-    console.log(catechistID.value);
   });
 
-  /* console.log(finded); */
-  console.log(forSearchCatechist.value);
   isEditComunity.value = true;
   visibleComunityDialog.value = true;
 };
 
+//Funcion para abrir el Dialog de advertenccia de eliminacion
 const deleteComunityDialog = (prod) => {
   visibleComunityDeleteDialog.value = true;
   comunity.value = { ...prod };
 };
 
-//Funcion para Borrar Datos de Formacion Academica
+//Funcion para Borrar Datos de Comunidades
 const deleteComunity = async () => {
   const dataDelete = await supabase
     .from("ComunidadCatequista")
@@ -408,8 +396,6 @@ const deleteComunity = async () => {
     await updateTable();
   }
 };
-
-//========================================================
 </script>
 
 <style lang="scss" scoped>

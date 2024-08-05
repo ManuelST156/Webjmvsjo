@@ -2,7 +2,7 @@
   <Toast />
   <main class="LoginRegister">
     <div id="containerRegister" class="card flex justify-content-center">
-      <h1 id="Tittle">Iniciar Sesion</h1>
+      <h1 id="Tittle">Recuperar Contraseña</h1>
 
       <div class="block">
         <FloatLabel class="FloatLabel">
@@ -24,44 +24,19 @@
         </FloatLabel>
       </div>
 
-      <div class="block">
-        <FloatLabel class="FloatLabel">
-          <Password
-            class="inputsLogin"
-            v-model="password"
-            toggleMask
-            :feedback="false"
-            id="password"
-            required="true"
-            :class="{ 'p-invalid': submitted && !password }"
-          />
-          <label for="password" :class="{ 'p-error': submitted && !password }">
-            {{
-              submitted && !password ? "Contraseña es requerido" : "Contraseña"
-            }}
-          </label>
-        </FloatLabel>
-      </div>
-
-      <div class="linksForget">
-        <router-link to="/recuperarPass">
-          <span class="text">Has Olvidado Tu Contraseña?</span>
-        </router-link>
-      </div>
-
       <div class="card flex justify-content-center">
         <Button
           type="submit"
           class="buttonSend"
-          label="Iniciar Sesion"
-          @click="login"
+          label="Recuperar Contraseña"
+          @click="recoveryPass"
           :loading="loading"
         />
       </div>
 
       <div class="linksLogin">
-        <router-link to="/registrar">
-          <span class="text">Crear Cuenta</span>
+        <router-link to="/iniciarSesion">
+          <span class="text">Iniciar Sesion</span>
         </router-link>
       </div>
     </div>
@@ -243,7 +218,6 @@ const loading = ref(false);
 ////variables de datos
 //========================================================
 const email = ref(null);
-const password = ref(null);
 const router = useRouter();
 
 //========================================================
@@ -251,55 +225,41 @@ const router = useRouter();
 //========================================================
 
 //Metodo para iniciar sesion
-const login = async () => {
+const recoveryPass = async () => {
   submitted.value = true;
 
-  if (email.value != null && password.value != null) {
+  if (email.value != null) {
     if (validateEmail(email.value)) {
       try {
         loading.value = true;
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.value,
-          password: password.value,
-        });
-        
-        localStorage.setItem("tokenJMV", data.session.access_token);
-        const userStatus=await getCurrentUser(data.user.id);
-        if(userStatus==='Admin')
-        {
-          sessionStorage.setItem("userRol", userStatus);
 
-          console.log(sessionStorage.getItem("userRol")); 
-        }
-
+        const { data, error } = await supabase.auth.resetPasswordForEmail(
+          email.value,
+          {
+            redirectTo: "http://localhost:5173/cambiarPass",
+          }
+        );
 
         if (error == null) {
           toast.add({
             severity: "success",
-            summary: "Bienvenido a JMV SJO",
-            detail: "Usuario Logueado Correctamente",
+            summary: "Recuperacion de Contraseña en Proceso",
+            detail: "Revise su correo Electronico",
             life: 3000,
           });
 
           submitted.value = false;
-          
-          setTimeout(async () => {
-            loading.value = false;
-            router.push({ path: "/" }).then(() => {
-              window.location.reload();
-            });
-            
-          }, 1000);
-        } 
-      } catch (error) {
-        loading.value = false;
+          loading.value = false;
+        } else {
+          loading.value = false;
           toast.add({
             severity: "error",
             summary: "Correo o Contraseña Incorrectos",
             detail: "Error Credenciales Erroneas",
             life: 3000,
           });
-      }
+        }
+      } catch (error) {}
     } else {
       toast.add({
         severity: "error",
@@ -316,27 +276,6 @@ const login = async () => {
       life: 3000,
     });
   }
-};
-
-const getCurrentUser = async (user) => {
-  if (user != null) {
-    const roleID = await supabase
-      .from("Usuarios")
-      .select("idRolUsuario")
-      .eq("idAuth", user);
-
-    console.log(roleID.data[0].idRolUsuario);
-
-    const roleUser = await supabase
-      .from("Roles")
-      .select("nombreRol")
-      .eq("idRol", roleID.data[0].idRolUsuario);
-
-    console.log(roleUser.data[0].nombreRol);
-    return roleUser.data[0].nombreRol;
-  }
-
-  return "Miembro";
 };
 
 //Metodo para validar Email

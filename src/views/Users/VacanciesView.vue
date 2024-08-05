@@ -4,14 +4,15 @@
       <h1>Vocalias</h1>
 
       <div class="ButtonLine">
-        
         <router-link to="/aplicarVacante">
           <Button class="buttonSend" label="Aplicar Vocalia" />
         </router-link>
 
-        <Button class="buttonSend" label="Conocer Vocalia" />
+        <router-link to="/vocaliasInfo">
+          <Button class="buttonSend" label="Conocer Vocalias" />
+        </router-link>
 
-        <router-link to="/verVacantes" v-if="userStatus=='Admin'">
+        <router-link to="/verVacantes" v-if="userStatus == 'Admin'">
           <Button class="buttonSend" label="Ver Solicitudes de Vocalia" />
         </router-link>
       </div>
@@ -20,44 +21,53 @@
 
       <h1>Vocalias Aplicadas</h1>
       <div class="containerCard">
-        <Card class="Card" v-for="request in listRequest" :key="request.idUsuario">
+        <Card
+          class="Card"
+          v-for="request in listRequest"
+          :key="request.idUsuario"
+        >
           <template #content>
             <div class="card-inner">
               <div class="profile-picture">
-                <img :src="request.imagenURL" alt="Foto de Perfil">
+                <img :src="request.imagenURL" alt="Foto de Perfil" />
               </div>
               <div class="card-details">
                 <h2>Detalles del Solicitante</h2>
-                <p><strong>Nombre:</strong> {{ request.nombresSolicitante }} {{ request.apellidosSolicitante }}</p>
+                <p>
+                  <strong>Nombre:</strong> {{ request.nombresSolicitante }}
+                  {{ request.apellidosSolicitante }}
+                </p>
                 <p><strong>Comunidad:</strong> {{ request.nombreComunidad }}</p>
                 <p><strong>Edad:</strong> {{ request.edadSolicitante }} años</p>
                 <p><strong>Vocalía:</strong> {{ request.nombreVocalia }}</p>
-                <p><Button
-                  outlined
-                  rounded
-                  id="tableButton"
-                  class="mr-2"
-                  @click="editRequest(request.idSolicitud)"
-                >
-                  <div class="icon-wrapper">
-                    <span class="material-symbols-outlined icon"
-                      >edit_square</span
-                    >
-                  </div>
-                </Button>
+                <p>
+                  <Button
+                    outlined
+                    rounded
+                    id="crudButton"
+                    class="mr-2"
+                    @click="editRequest(request.idSolicitud)"
+                  >
+                    <div class="icon-wrapper">
+                      <span class="material-symbols-outlined icon"
+                        >edit_square</span
+                      >
+                    </div>
+                  </Button>
 
-                <Button
-                  outlined
-                  rounded
-                  severity="danger"
-                  id="tableButton"
-                  class="mr-1"
-                  @click="deleteRequest(request.idSolicitud)"
-                >
-                  <div class="icon-wrapper">
-                    <span class="material-symbols-outlined icon">delete</span>
-                  </div>
-                </Button></p>
+                  <Button
+                    outlined
+                    rounded
+                    severity="danger"
+                    id="crudButton"
+                    class="mr-1"
+                    @click="deleteRequest(request.idSolicitud)"
+                  >
+                    <div class="icon-wrapper">
+                      <span class="material-symbols-outlined icon">delete</span>
+                    </div>
+                  </Button>
+                </p>
               </div>
             </div>
           </template>
@@ -68,68 +78,67 @@
 </template>
 
 <script setup>
-import ButtonsChains from "@/components/ButtonsChains.vue";
+//========================================================
+//Imports de Recursos
+//========================================================
 import { ref, onMounted } from "vue";
 import { createClient } from "@supabase/supabase-js";
 import { jwtDecode } from "jwt-decode";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 //========================================================
 //Variables de Supabase
+//========================================================
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 //========================================================
-
-//========================================================
 //Variables de datos
-
-const listRequest=ref(null);
-const router=useRouter();
 //========================================================
 
-//========================================================
+const listRequest = ref(null);
+const router = useRouter();
 
+//========================================================
 //Variable de Estado
-const userStatus=ref(sessionStorage.getItem('userRol'));
-
 //========================================================
+
+const userStatus = ref(sessionStorage.getItem("userRol"));
 
 //========================================================
 //onMounted - Funciones al cargar pagina
+//========================================================
 
-onMounted(async ()=>{
+onMounted(async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: listAuthUsers } = await supabase
+    .from("Usuarios")
+    .select("idUsuario")
+    .eq("idAuth", user.id);
 
-  const { data: listAuthUsers} = await supabase
-    .from('Usuarios')
-    .select('idUsuario')
-    .eq('idAuth', user.id);
-
-
-  const {data, error}=await supabase
+  const { data, error } = await supabase
     .from("vistapreviasolicitud")
-    .select('*')
-    .eq('idUsuario',listAuthUsers[0].idUsuario);
+    .select("*")
+    .eq("idUsuario", listAuthUsers[0].idUsuario);
 
-  listRequest.value=data;
+  listRequest.value = data;
 });
 
 //========================================================
-
-//========================================================
 //Methods
-
+//========================================================
 
 //Metodo para decodificar token
 const decodeToken = () => {
   try {
-    const token = localStorage.getItem('tokenJMV');
+    const token = localStorage.getItem("tokenJMV");
     if (!token) {
-      throw new Error('No token found in localStorage');
+      throw new Error("No token found in localStorage");
     }
 
     const decodedToken = jwtDecode(token);
@@ -137,114 +146,93 @@ const decodeToken = () => {
 
     return userID;
   } catch (error) {
-    console.error('Error decoding token:', error);
     return null;
   }
-
 };
 
-const editRequest=async (id)=>{
-  const objectSend={};
+//Permite editar ficha
+const editRequest = async (id) => {
+  const objectSend = {};
 
-  /* const finded= listRequest.value.find(obj => obj.idSolicitud === id); */
-
-  const {data:servicesGet, error:serviceError}= await supabase
+  const { data: servicesGet, error: serviceError } = await supabase
     .from("vistaservicios")
     .select("idServicio")
-    .eq('idSolicitud',id);
+    .eq("idSolicitud", id);
 
-  const {data:academicGet, error:academicError}= await supabase
-  .from("vistaformacion")
-  .select("idFormacionAcademica")
-  .eq('idSolicitud',id);
-  
+  const { data: academicGet, error: academicError } = await supabase
+    .from("vistaformacion")
+    .select("idFormacionAcademica")
+    .eq("idSolicitud", id);
 
+  localStorage.setItem("isEditing", id);
+  router.push({ name: "applyVacancy" });
+};
 
-  localStorage.setItem('isEditing',id);
-  router.push({ name: 'applyVacancy' });
-}
+const deleteRequest = async (id) => {
+  //Select
+  const { data: selectServices } = await supabase
+    .from("ServiciosSolicitud")
+    .select("idServicio")
+    .eq("idSolicitud", id);
 
-
-const deleteRequest=async (id)=>{
-
-
-//Select
-  const {data:selectServices}= await supabase
-    .from('ServiciosSolicitud')
-    .select('idServicio')
-    .eq('idSolicitud',id);
-
-  const {data:selectAcademic}= await supabase
-  .from('FormacionAcademicaSolicitud')
-  .select('idFormacionAcademica')
-  .eq('idSolicitud',id);
+  const { data: selectAcademic } = await supabase
+    .from("FormacionAcademicaSolicitud")
+    .select("idFormacionAcademica")
+    .eq("idSolicitud", id);
 
   //delete
 
   const servicesRequestDelete = await supabase
-  .from('ServiciosSolicitud')
-  .delete()
-  .eq('idSolicitud', id); 
+    .from("ServiciosSolicitud")
+    .delete()
+    .eq("idSolicitud", id);
 
   const academicRequestDelete = await supabase
-  .from('UsuarioSolicitud')
-  .delete()
-  .eq('idSolicitud', id);
+    .from("UsuarioSolicitud")
+    .delete()
+    .eq("idSolicitud", id);
 
   const userRequestDelete = await supabase
-  .from('FormacionAcademicaSolicitud')
-  .delete()
-  .eq('idSolicitud', id);
+    .from("FormacionAcademicaSolicitud")
+    .delete()
+    .eq("idSolicitud", id);
 
-
-
-  selectServices.forEach(async element=>{
-    const servicesDelete= await supabase
-  .from('Servicios')
-  .delete()
-  .eq('idServicio', element.idServicio); 
+  selectServices.forEach(async (element) => {
+    const servicesDelete = await supabase
+      .from("Servicios")
+      .delete()
+      .eq("idServicio", element.idServicio);
   });
 
-  selectAcademic.forEach(async element=>{
-    const academicDelete= await supabase
-  .from('FormacionAcademica')
-  .delete()
-  .eq('idFormacionAcademica', element.idFormacionAcademica); 
- 
+  selectAcademic.forEach(async (element) => {
+    const academicDelete = await supabase
+      .from("FormacionAcademica")
+      .delete()
+      .eq("idFormacionAcademica", element.idFormacionAcademica);
   });
 
   const requestDelete = await supabase
-  .from('Solicitudes')
-  .delete()
-  .eq('idSolicitud', id);
-  
-  const { data: listAuthUsers} = await supabase
-    .from('Usuarios')
-    .select('idUsuario')
-    .eq('idAuth', decodeToken());
-    
-  const {data, error}=await supabase
+    .from("Solicitudes")
+    .delete()
+    .eq("idSolicitud", id);
+
+  const { data: listAuthUsers } = await supabase
+    .from("Usuarios")
+    .select("idUsuario")
+    .eq("idAuth", decodeToken());
+
+  const { data, error } = await supabase
     .from("vistapreviasolicitud")
-    .select('*')
-    .eq('idUsuario',listAuthUsers[0].idUsuario);
+    .select("*")
+    .eq("idUsuario", listAuthUsers[0].idUsuario);
 
-    listRequest.value=data;
-
-    
-}
-
-
-
-
-
-//========================================================
-
+  listRequest.value = data;
+};
 </script>
 
 <style lang="scss" scoped>
-
 .buttonSend {
-  margin:15px 10px;
+  margin: 15px 10px;
   background-color: var(--darkblue);
   border: none;
 }
@@ -257,7 +245,7 @@ const deleteRequest=async (id)=>{
   background-color: var(--darkblue);
 }
 
-::v-deep(#tableButton.p-button) {
+::v-deep(#crudButton.p-button) {
   padding: 10px;
   margin: 0 3px;
   width: 30px;
@@ -276,7 +264,6 @@ const deleteRequest=async (id)=>{
   font-size: 20px;
 }
 
-
 .containerCard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -285,9 +272,6 @@ const deleteRequest=async (id)=>{
 }
 
 .Card {
- /*  width: 400px;
-  height: 200px;
-  margin: 20px; */
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -344,5 +328,37 @@ const deleteRequest=async (id)=>{
 
 .buttonVacancies {
   margin: 20px;
+}
+
+/* Media Queries */
+
+@media (min-width: 1025px) {
+  .card-inner {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .card-details {
+    text-align: left;
+  }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .containerCard {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .containerCard {
+    grid-template-columns: 1fr;
+  }
+
+  ::v-deep(#crudButton.p-button) {
+    padding: 10px;
+    margin: 0 3px;
+    width: 20px;
+    height: 20px;
+    font-size: 15px;
+  }
 }
 </style>
