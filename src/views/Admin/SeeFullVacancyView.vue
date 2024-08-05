@@ -15,7 +15,16 @@
         <div class="block"></div>
         <!-- <div class="block"></div> -->
 
-        <!--========================================================-->
+        <div class="block">
+          <FloatLabel class="FloatLabel">
+            <InputText
+              v-model="vacancyRequest.nombreVocalia"
+              id="vacancy"
+              class="w-full md:w-32rem"
+              :readonly="true"
+            />
+          </FloatLabel>
+        </div>
 
         <!--========================================================-->
         <!--Datos Generales-->
@@ -146,7 +155,7 @@
           <Divider class="Divider" type="solid" />
         </div>
 
-        <div class="fullLine">
+        <div class="fullLine" id="Table">
           <DataTable :value="allAcademic">
             <Column
               style="min-width: 12rem"
@@ -281,7 +290,7 @@
           <Divider class="Divider" type="solid" />
         </div>
 
-        <div class="fullLine">
+        <div class="fullLine" id="Table">
           <DataTable :value="allServices">
             <Column
               style="min-width: 12rem"
@@ -355,6 +364,8 @@
   margin: 5px 0;
   background-color: var(--darkblue);
   border: none;
+  padding: 10px 20px; // Añadido para mejorar el diseño en pantallas pequeñas
+  box-sizing: border-box; // Incluye padding y border en el ancho total
 }
 
 .buttonSend:hover {
@@ -371,13 +382,10 @@
     margin: 10px 0;
   }
 
-  .p-datatable-thead > tr > th {
-    border-color: var(--darkblue);
-    border-width: 1px 1px 1px 1px;
-  }
+  .p-datatable-thead > tr > th,
   .p-datatable-tbody > tr > td {
     border-color: var(--darkblue);
-    border-width: 1px 1px 1px 1px;
+    border-width: 1px;
   }
 }
 
@@ -401,8 +409,9 @@
 }
 
 #imageUpload {
-  width: 230px;
-  height: 200px;
+  width: 100%; // Cambiado a 100% para responsividad
+  max-width: 230px; // Ancho máximo para evitar que se agrande demasiado en pantallas grandes
+  height: auto; // Ajustado para mantener la proporción
   background-color: lightgray;
   margin-bottom: 30px;
   border-radius: 10px;
@@ -414,6 +423,7 @@
   justify-content: center;
   align-items: center;
   height: auto;
+  box-sizing: border-box;
 }
 
 .fullLine {
@@ -428,12 +438,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 70%;
+  width: 80%; // Ajustado para adaptarse a diferentes tamaños de pantalla
+  max-width: 800px; // Ancho máximo para pantallas grandes
   height: auto;
+  box-sizing: border-box; // Incluye padding y border en el ancho total
+  overflow: hidden; // Evita el desbordamiento del contenedor
+  margin-left: 0; // Asegura que el contenedor se alinee con el contenido principal
 }
 
 #Tittle {
-  /* align-self: center; */
   margin-bottom: 20px;
   margin-top: 0;
 }
@@ -444,14 +457,25 @@
   margin: 10px 0;
   flex: 1 1 calc(50% - 20px);
   min-width: 200px;
+  box-sizing: border-box;
+}
+
+.blockUpload {
+  width: 100%; // Cambiado a 100% para responsividad
+  max-width: 300px; // Ancho máximo para pantallas grandes
+  height: 60px;
+  margin: 10px 0;
+  min-width: 20px;
+  box-sizing: border-box;
 }
 
 .pruebaImg {
   width: 100%;
-  height: 210px;
+  height: auto; // Ajustado para mantener la proporción
   margin: 10px 0;
   flex: 1 1 calc(50% - 20px);
   min-width: 200px;
+  box-sizing: border-box;
 }
 
 .firstGroup {
@@ -465,6 +489,7 @@
   height: 40px;
   margin-bottom: 4rem;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .textLogin {
@@ -472,6 +497,7 @@
   margin-bottom: 4rem;
   width: 100%;
   resize: none;
+  box-sizing: border-box;
 }
 
 .fullLineText {
@@ -496,7 +522,8 @@ input[type="file"] {
   background-color: var(--darkblue);
   height: 40px;
   margin-bottom: 4rem;
-  width: 35%;
+  width: 100%; // Cambiado a 100% para responsividad
+  max-width: 300px; // Ancho máximo para pantallas grandes
   border: none;
   color: white;
   padding: 10px 20px;
@@ -507,6 +534,7 @@ input[type="file"] {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+  box-sizing: border-box;
 }
 
 .labelFile:hover {
@@ -515,6 +543,85 @@ input[type="file"] {
 
 .labelFile:active {
   background-color: var(--darkblue);
+}
+
+// Media Queries
+@media (max-width: 768px) {
+  #containerRegister {
+    width: 95%;
+    padding: 1rem;
+    margin-left: 0; // Asegura que el formulario no quede oculto bajo el sidebar
+  }
+
+  .buttonSend {
+    padding: 8px 16px;
+  }
+
+  .labelFile {
+    font-size: 18px;
+  }
+
+  .icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  #containerRegister {
+    padding: 0.5rem;
+    margin-left: 0rem; // Asegura que el formulario no quede oculto bajo el sidebar
+    width: 70%; // Ajustado para adaptarse a diferentes tamaños de pantalla
+    align-items: normal;
+    height: auto;
+  }
+
+  .buttonSend {
+    padding: 6px 12px;
+  }
+
+  .labelFile {
+    font-size: 16px;
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+
+  .pruebaImg {
+    height: auto; // Ajustado para mantener la proporción en pantallas pequeñas
+  }
+
+  ::v-deep(.p-datatable) {
+    .p-datatable-table {
+      font-size: 12px; /* Ajusta el tamaño de la fuente de toda la tabla */
+    }
+
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 6px; /* Ajusta el relleno de las celdas */
+    }
+
+    .p-datatable-thead > tr > th {
+      font-size: 14px; /* Ajusta el tamaño de la fuente de los encabezados */
+    }
+
+    /* Ajusta el ancho de las columnas */
+    .p-datatable-table colgroup col:nth-child(1) {
+      width: 30%; /* Ancho de la primera columna */
+    }
+
+    .p-datatable-table colgroup col:nth-child(2) {
+      width: 30%; /* Ancho de la segunda columna */
+    }
+
+    .p-datatable-table colgroup col:nth-child(3) {
+      width: 40%; /* Ancho de la tercera columna */
+    }
+  }
+
+  #Table {
+    overflow: auto; /* Permite el desplazamiento horizontal si es necesario */
+  }
 }
 </style>
 
@@ -554,6 +661,7 @@ const catechistName = ref();
 const formationStage = ref();
 const comunityName = ref();
 const getRequestID = ref();
+const vacancyList = ref();
 
 //========================================================
 //OnMounted
@@ -561,6 +669,10 @@ const getRequestID = ref();
 onMounted(async () => {
   if (localStorage.getItem("isSeeing")) {
     getRequestID.value = localStorage.getItem("isSeeing");
+
+    let vacancyGet = await supabase.from("Vocalias").select("*");
+
+    vacancyList.value = vacancyGet.data;
 
     const requestGet = await supabase
       .from("Solicitudes")
@@ -579,11 +691,16 @@ onMounted(async () => {
 
     vacancyRequest.value = requestGet.data[0];
 
-
     const GetComunity = await supabase
       .from("datoscompletocomunidad")
       .select("*")
       .eq("idComunidad", vacancyRequest.value.idComunidad);
+
+    const finded = vacancyList.value.find(
+      (object) => object.id === vacancyRequest.idVocalia
+    );
+
+    vacancyRequest.value.nombreVocalia = finded.nombreVocalia;
 
     comunityName.value = GetComunity.data[0].nombreComunidad;
     formationStage.value = GetComunity.data[0].nombreEtapa;
@@ -603,6 +720,13 @@ onMounted(async () => {
     isSeeing.value = !!localStorage.getItem("isSeeing");
 
     localStorage.removeItem("isSeeing");
+    console.log(vacancyList.value);
   }
 });
+
+/* const getVacancyName=(id)=>{
+  const finded=vacancyList.value.find(object=>object.id===id);
+  
+  return finded.nombreVocalia;
+} */
 </script>

@@ -1400,6 +1400,9 @@ const saveVacancy = async () => {
     }
 
     loading.value = false;
+    router.push({ path: "/vacantes" }).then(() => {
+              window.location.reload();
+            });
   } catch (error) {
     toast.add({
       severity: "error",

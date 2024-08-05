@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <main>
     <div>
       <h1>Vocalias</h1>
@@ -61,7 +62,7 @@
                     severity="danger"
                     id="crudButton"
                     class="mr-1"
-                    @click="deleteRequest(request.idSolicitud)"
+                    @click="deleteDialog(request.idSolicitud)"
                   >
                     <div class="icon-wrapper">
                       <span class="material-symbols-outlined icon">delete</span>
@@ -74,6 +75,35 @@
         </Card>
       </div>
     </div>
+
+     <!--Verificacion de Eliminacion-->
+
+     <div class="fullLine">
+      <Dialog
+        v-model:visible="visibleDeleteDialog"
+        modal
+        header="Eliminar Campo"
+        class="w-3"
+      >
+        <p>Desea eliminar este Campo?</p>
+
+        <div class="flex justify-content-end gap-2">
+          <Button
+            class="buttonSend"
+            type="button"
+            label="Cancelar"
+            @click="visibleDeleteDialog = false"
+          ></Button>
+          <Button
+            class="buttonSend"
+            type="submit"
+            label="Eliminar"
+            :loading="loading"
+            @click="deleteRequest(toDelete)"
+          ></Button>
+        </div>
+      </Dialog>
+    </div>
   </main>
 </template>
 
@@ -85,6 +115,7 @@ import { ref, onMounted } from "vue";
 import { createClient } from "@supabase/supabase-js";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
 
 //========================================================
 //Variables de Supabase
@@ -95,11 +126,20 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 //========================================================
+//Variables de Toast
+//========================================================
+
+const toast = useToast();
+
+//========================================================
 //Variables de datos
 //========================================================
 
 const listRequest = ref(null);
 const router = useRouter();
+const visibleDeleteDialog = ref(false);
+const toDelete=ref();
+const loading=ref(false);
 
 //========================================================
 //Variable de Estado
@@ -132,6 +172,12 @@ onMounted(async () => {
 //========================================================
 //Methods
 //========================================================
+
+//Abrir dialog de advertencia
+const deleteDialog = (id) => {
+  visibleDeleteDialog.value = true;
+  toDelete.value=id;
+};
 
 //Metodo para decodificar token
 const decodeToken = () => {
@@ -227,6 +273,17 @@ const deleteRequest = async (id) => {
     .eq("idUsuario", listAuthUsers[0].idUsuario);
 
   listRequest.value = data;
+
+  loading.value=false;
+  visibleDeleteDialog.value=false;
+  
+
+  toast.add({
+        severity: "success",
+        summary: "Registro Eliminado",
+        detail: "Solicitud Eliminada",
+        life: 3000,
+      });
 };
 </script>
 
