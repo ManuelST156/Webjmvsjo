@@ -11,7 +11,7 @@
         circular
         :autoplayInterval="7000"
         id="my-carousel"
-        class="flex flex-row md:flex-column lg:flex-column"
+        class="flex flex-row md:flex-column lg:flex-column  carousel-container"
       >
         <template #item="slotProps">
           <div class="div1">
@@ -20,7 +20,7 @@
                 <img
                   :src="slotProps.data.imagenUrl"
                   alt="Imagen No carga"
-                  class="w-full border-round"
+                  class="w-full border-round carousel-image"
                 />
               </div>
             </div>
@@ -87,7 +87,7 @@
   });
   </script>
   
-  <style lang="scss" scoped>
+  <!-- <style lang="scss" scoped>
   img {
     height: 350px;
     width: 100%;
@@ -116,5 +116,48 @@
       background-color: var(--darkblue);;
     }
   }
+  </style> -->
+  
+
+  <style lang="scss" scoped>
+  .carousel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .carousel-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px; /* Puedes ajustar esta altura según sea necesario */
+    /* object-fit: cover; */
+  }
+  
+  .div1 {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 0.5rem;
+    padding: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-color: rgba(20, 72, 21, 0.427);
+  }
+  
+  ::v-deep(.p-carousel) { 
+    .p-carousel-next {
+      color: var(--darkblue);
+    }
+  
+    .p-carousel-prev {
+      color: var(--darkblue);
+    }
+  
+    .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+      background-color: var(--darkblue);
+    }
+  }
   </style>
+
   

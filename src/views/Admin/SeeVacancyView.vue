@@ -58,7 +58,7 @@
                       severity="info"
                       id="crudButton"
                       class="mr-1"
-                      @click="seeRequest(request.idSolicitud)"
+                      @click="seeRequest(request.idSolicitud,request.codigoImagen)"
                     >
                       <div class="icon-wrapper">
                         <span class="material-symbols-outlined icon"
@@ -98,7 +98,7 @@
             type="submit"
             label="Eliminar"
             :loading="loading"
-            @click="deleteRequest(toDelete)"
+            @click="deleteRequest(toDelete,toDeleteImage)"
           ></Button>
         </div>
       </Dialog>
@@ -140,6 +140,7 @@ const listRequest = ref(null);
 const router = useRouter();
 const visibleDeleteDialog = ref(false);
 const toDelete=ref();
+const toDeleteImage=ref();
 const loading=ref(false);
 //========================================================
 //onMounted
@@ -167,13 +168,14 @@ const editRequest = async (id) => {
 };
 
 //Abrir dialog de advertencia
-const deleteDialog = (id) => {
+const deleteDialog = (id,codigo) => {
   visibleDeleteDialog.value = true;
   toDelete.value=id;
+  toDeleteImage.value=codigo;
 };
 
 //Permite eliminar alguna ficha de un usuario
-const deleteRequest = async (id) => {
+const deleteRequest = async (id,codigo) => {
   try {
     loading.value=true;
     //Select
@@ -222,6 +224,10 @@ const deleteRequest = async (id) => {
     .from("Solicitudes")
     .delete()
     .eq("idSolicitud", id);
+
+    const deleteStorage = await supabase.storage
+      .from("imageVacancy")
+      .remove(codigo);
 
   const { data, error } = await supabase
     .from("vistapreviasolicitud")

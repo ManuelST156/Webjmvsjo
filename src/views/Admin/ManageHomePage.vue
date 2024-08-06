@@ -641,24 +641,6 @@
       </Dialog>
     </div>
 
-    <Button outlined rounded id="tableButton" class="mr-2" @click="editMessage">
-      <div class="icon-wrapper">
-        <span class="material-symbols-outlined icon">edit_square</span>
-      </div>
-    </Button>
-
-    <Button
-      outlined
-      rounded
-      severity="danger"
-      id="tableButton"
-      class="mr-2"
-      @click="deleteCarouselDialog"
-    >
-      <div class="icon-wrapper">
-        <span class="material-symbols-outlined icon">delete</span>
-      </div>
-    </Button>
   </main>
 </template>
 

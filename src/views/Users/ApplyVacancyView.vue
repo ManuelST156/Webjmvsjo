@@ -855,7 +855,7 @@
 #imageUpload {
   width: 100%; // Cambiado a 100% para responsividad
   max-width: 230px; // Ancho máximo para evitar que se agrande demasiado en pantallas grandes
-  height: auto; // Ajustado para mantener la proporción
+  height: 240px; // Ajustado para mantener la proporción
   background-color: lightgray;
   margin-bottom: 30px;
   border-radius: 10px;
@@ -1081,7 +1081,7 @@ input[type="file"] {
 //========================================================
 import { ref, onMounted } from "vue";
 import { useToast } from "primevue/usetoast";
-import { ProductService } from "@/services/ProductService";
+import { useRouter } from "vue-router";
 import { createClient } from "@supabase/supabase-js";
 import { uid } from "uid";
 import { jwtDecode } from "jwt-decode";
@@ -1117,6 +1117,7 @@ const visibleAcademicDialog = ref(false);
 const visibleServiceDialog = ref(false);
 const loading = ref(false);
 const isEditing = ref(false);
+const router = useRouter();
 
 
 
@@ -1268,6 +1269,7 @@ const saveVacancy = async () => {
           .getPublicUrl(nombreImagen);
 
         vacancyRequest.value.imagenURL = urlDescargar.data.publicUrl;
+        vacancyRequest.value.codigoImagen=nombreImagen;
       }
     }
 
@@ -1291,11 +1293,13 @@ const saveVacancy = async () => {
                 .from("FormacionAcademicaSolicitud")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
+                console.log("Bien aqui?");
 
               const { data: deleteDataAcademic } = await supabase
                 .from("FormacionAcademica")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
+                console.log("Bien aqui?");
             });
           }
 
@@ -1309,7 +1313,7 @@ const saveVacancy = async () => {
             .from("FormacionAcademica")
             .upsert(newObject)
             .select();
-
+          console.log(error,data);
           const bridgeTable = {
             idSolicitud: getRequestID.value,
             idFormacionAcademica: data[0].idFormacionAcademica,
@@ -1319,10 +1323,11 @@ const saveVacancy = async () => {
             .from("FormacionAcademicaSolicitud")
             .upsert(bridgeTable)
             .select();
+            console.log(uploadAcademicBackgroud);
         }
       });
     }
-    //Agregamos los datos de Formacion a su tabla en la DB
+    //Agregamos los datos de Servicios a su tabla en la DB
     if (allServices.value.length != 0) {
       allServices.value.forEach(async (element) => {
         if (Number.isInteger(element.idServicio)) {
@@ -1344,13 +1349,14 @@ const saveVacancy = async () => {
             .from("Servicios")
             .upsert(element)
             .select();
+            console.log(error,data);
         } else {
           const { idServicio, ...newObject } = element;
           const { error, data } = await supabase
             .from("Servicios")
             .upsert(newObject)
             .select();
-          
+            console.log(error,data);
 
           const bridgeTable = {
             idSolicitud: getRequestID.value,
@@ -1361,6 +1367,7 @@ const saveVacancy = async () => {
             .from("ServiciosSolicitud")
             .upsert(bridgeTable)
             .select();
+            console.log(error,data);
         }
       });
     }
@@ -1410,7 +1417,7 @@ const saveVacancy = async () => {
       detail: "Datos no Agregados Correctamente",
       life: 3000,
     });
-
+    console.log(error);
 
     loading.value = false;
   }

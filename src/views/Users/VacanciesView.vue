@@ -62,7 +62,7 @@
                     severity="danger"
                     id="crudButton"
                     class="mr-1"
-                    @click="deleteDialog(request.idSolicitud)"
+                    @click="deleteDialog(request.idSolicitud,request.codigoImagen)"
                   >
                     <div class="icon-wrapper">
                       <span class="material-symbols-outlined icon">delete</span>
@@ -99,7 +99,7 @@
             type="submit"
             label="Eliminar"
             :loading="loading"
-            @click="deleteRequest(toDelete)"
+            @click="deleteRequest(toDelete,toDeleteImage)"
           ></Button>
         </div>
       </Dialog>
@@ -139,6 +139,7 @@ const listRequest = ref(null);
 const router = useRouter();
 const visibleDeleteDialog = ref(false);
 const toDelete=ref();
+const toDeleteImage=ref();
 const loading=ref(false);
 
 //========================================================
@@ -167,6 +168,7 @@ onMounted(async () => {
     .eq("idUsuario", listAuthUsers[0].idUsuario);
 
   listRequest.value = data;
+  console.log(listRequest.value);
 });
 
 //========================================================
@@ -174,9 +176,10 @@ onMounted(async () => {
 //========================================================
 
 //Abrir dialog de advertencia
-const deleteDialog = (id) => {
+const deleteDialog = (id,codigo) => {
   visibleDeleteDialog.value = true;
   toDelete.value=id;
+  toDeleteImage.value=codigo;
 };
 
 //Metodo para decodificar token
@@ -214,7 +217,7 @@ const editRequest = async (id) => {
   router.push({ name: "applyVacancy" });
 };
 
-const deleteRequest = async (id) => {
+const deleteRequest = async (id,codigo) => {
   //Select
   const { data: selectServices } = await supabase
     .from("ServiciosSolicitud")
@@ -225,6 +228,7 @@ const deleteRequest = async (id) => {
     .from("FormacionAcademicaSolicitud")
     .select("idFormacionAcademica")
     .eq("idSolicitud", id);
+
 
   //delete
 
@@ -262,10 +266,15 @@ const deleteRequest = async (id) => {
     .delete()
     .eq("idSolicitud", id);
 
+    const deleteStorage = await supabase.storage
+      .from("imageVacancy")
+      .remove(codigo);
+
   const { data: listAuthUsers } = await supabase
     .from("Usuarios")
     .select("idUsuario")
     .eq("idAuth", decodeToken());
+
 
   const { data, error } = await supabase
     .from("vistapreviasolicitud")
