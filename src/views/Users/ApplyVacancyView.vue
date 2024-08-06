@@ -1274,13 +1274,13 @@ const saveVacancy = async () => {
                 .from("FormacionAcademicaSolicitud")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
-              console.log("Bien aqui?");
+              
 
               const { data: deleteDataAcademic } = await supabase
                 .from("FormacionAcademica")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
-              console.log("Bien aqui?");
+              
             });
           }
 
@@ -1294,7 +1294,7 @@ const saveVacancy = async () => {
             .from("FormacionAcademica")
             .upsert(newObject)
             .select();
-          console.log(error, data);
+          
           const bridgeTable = {
             idSolicitud: requestID,
             idFormacionAcademica: data[0].idFormacionAcademica,
@@ -1304,7 +1304,7 @@ const saveVacancy = async () => {
             .from("FormacionAcademicaSolicitud")
             .upsert(bridgeTable)
             .select();
-          console.log(uploadAcademicBackgroud);
+          
         }
       });
     }
@@ -1330,14 +1330,15 @@ const saveVacancy = async () => {
             .from("Servicios")
             .upsert(element)
             .select();
-          console.log(error, data);
+          
         } else {
           const { idServicio, ...newObject } = element;
+          console.log(newObject);
           const { error, data } = await supabase
             .from("Servicios")
             .upsert(newObject)
             .select();
-          console.log(error, data);
+          
 
           const bridgeTable = {
             idSolicitud: requestID,
@@ -1348,7 +1349,7 @@ const saveVacancy = async () => {
             .from("ServiciosSolicitud")
             .upsert(bridgeTable)
             .select();
-          console.log(error, data);
+          
         }
       });
     }
@@ -1396,7 +1397,7 @@ const saveVacancy = async () => {
       detail: "Datos no Agregados Correctamente",
       life: 3000,
     });
-    console.log(error);
+   
 
     loading.value = false;
   }

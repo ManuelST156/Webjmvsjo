@@ -168,7 +168,7 @@ onMounted(async () => {
     .eq("idUsuario", listAuthUsers[0].idUsuario);
 
   listRequest.value = data;
-  console.log(listRequest.value);
+  
 });
 
 //========================================================
