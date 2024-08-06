@@ -341,11 +341,11 @@
             label="Agregar Formacion Academica"
             @click="(visibleAcademicDialog = true), (academicBackground = {})"
           />
-          <Dialog class="w-6"
+          <Dialog
+            class="w-6"
             v-model:visible="visibleAcademicDialog"
             modal
             header="Formación Académica"
-            
           >
             <div class="block">
               <FloatLabel class="FloatLabel">
@@ -1038,7 +1038,6 @@ input[type="file"] {
   ::v-deep(.p-datatable) {
     .p-datatable-table {
       font-size: 12px; /* Ajusta el tamaño de la fuente de toda la tabla */
-      
     }
 
     .p-datatable-thead > tr > th,
@@ -1067,13 +1066,8 @@ input[type="file"] {
   #Table {
     overflow: auto; /* Permite el desplazamiento horizontal si es necesario */
   }
-
-
-
 }
 </style>
-
-
 
 <script setup>
 //========================================================
@@ -1094,14 +1088,11 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-
-
 //========================================================
 //Variables de Toast
 //========================================================
 
 const toast = useToast();
-
 
 //========================================================
 //Variable de JWT para manejo de tokens
@@ -1118,8 +1109,6 @@ const visibleServiceDialog = ref(false);
 const loading = ref(false);
 const isEditing = ref(false);
 const router = useRouter();
-
-
 
 //========================================================
 //Variables de datos
@@ -1179,8 +1168,6 @@ const sacraments = ref([
   { sacraments: "Eucaristía", value: "Eucaristía" },
 ]);
 
-
-
 //========================================================
 //Mounted
 //========================================================
@@ -1189,7 +1176,6 @@ onMounted(async () => {
   let vacancyGet = await supabase.from("Vocalias").select("*");
 
   let comunityGet = await supabase.from("datoscompletocomunidad").select("*");
-
 
   vacancyList.value = vacancyGet.data;
   comunityList.value = comunityGet.data;
@@ -1202,7 +1188,6 @@ onMounted(async () => {
       .select("*")
       .eq("idSolicitud", getRequestID.value);
 
-
     const requestServicesGet = await supabase
       .from("obtenerservicios")
       .select("*")
@@ -1212,7 +1197,6 @@ onMounted(async () => {
       .from("obtenerformacionacademica")
       .select("*")
       .eq("idSolicitud", getRequestID.value);
-
 
     vacancyRequest.value = requestGet.data[0];
     vacancyRequest.value.sacramentosSolicitante =
@@ -1229,14 +1213,11 @@ onMounted(async () => {
       allServices.value.push(newObject);
     });
 
-
     document.getElementById("imageUpload").src = vacancyRequest.value.imagenURL;
     isEditing.value = !!localStorage.getItem("isEditing");
     localStorage.removeItem("isEditing");
   }
 });
-
-
 
 //========================================================
 //Methods
@@ -1269,7 +1250,7 @@ const saveVacancy = async () => {
           .getPublicUrl(nombreImagen);
 
         vacancyRequest.value.imagenURL = urlDescargar.data.publicUrl;
-        vacancyRequest.value.codigoImagen=nombreImagen;
+        vacancyRequest.value.codigoImagen = nombreImagen;
       }
     }
 
@@ -1293,13 +1274,13 @@ const saveVacancy = async () => {
                 .from("FormacionAcademicaSolicitud")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
-                console.log("Bien aqui?");
+              console.log("Bien aqui?");
 
               const { data: deleteDataAcademic } = await supabase
                 .from("FormacionAcademica")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
-                console.log("Bien aqui?");
+              console.log("Bien aqui?");
             });
           }
 
@@ -1313,9 +1294,9 @@ const saveVacancy = async () => {
             .from("FormacionAcademica")
             .upsert(newObject)
             .select();
-          console.log(error,data);
+          console.log(error, data);
           const bridgeTable = {
-            idSolicitud: getRequestID.value,
+            idSolicitud: requestID,
             idFormacionAcademica: data[0].idFormacionAcademica,
           };
 
@@ -1323,7 +1304,7 @@ const saveVacancy = async () => {
             .from("FormacionAcademicaSolicitud")
             .upsert(bridgeTable)
             .select();
-            console.log(uploadAcademicBackgroud);
+          console.log(uploadAcademicBackgroud);
         }
       });
     }
@@ -1349,17 +1330,17 @@ const saveVacancy = async () => {
             .from("Servicios")
             .upsert(element)
             .select();
-            console.log(error,data);
+          console.log(error, data);
         } else {
           const { idServicio, ...newObject } = element;
           const { error, data } = await supabase
             .from("Servicios")
             .upsert(newObject)
             .select();
-            console.log(error,data);
+          console.log(error, data);
 
           const bridgeTable = {
-            idSolicitud: getRequestID.value,
+            idSolicitud: requestID,
             idServicio: data[0].idServicio,
           };
 
@@ -1367,7 +1348,7 @@ const saveVacancy = async () => {
             .from("ServiciosSolicitud")
             .upsert(bridgeTable)
             .select();
-            console.log(error,data);
+          console.log(error, data);
         }
       });
     }
@@ -1389,8 +1370,6 @@ const saveVacancy = async () => {
         .upsert(userRequestData)
         .select();
 
-      
-
       toast.add({
         severity: "success",
         summary: "Registro Agregado",
@@ -1408,8 +1387,8 @@ const saveVacancy = async () => {
 
     loading.value = false;
     router.push({ path: "/vacantes" }).then(() => {
-              window.location.reload();
-            });
+      window.location.reload();
+    });
   } catch (error) {
     toast.add({
       severity: "error",
@@ -1422,7 +1401,6 @@ const saveVacancy = async () => {
     loading.value = false;
   }
 };
-
 
 //Metodo para decodificar token
 const decodeToken = () => {
@@ -1447,15 +1425,12 @@ const loadComunityData = () => {
     (c) => c.idComunidad === vacancyRequest.value.idComunidad
   );
 
- 
-
   formationStage.value = getDataComunity.nombreEtapa;
   catechistName.value = getDataComunity.nombrecatequista;
 };
 
 //Metodo para mostrar la imagen, desde que es cargada
 const onFileChange = (event) => {
-  
   fileUpload.value = event.target;
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -1476,7 +1451,6 @@ const onFileChange = (event) => {
 
 //Funcion para Guardar Formacion Academica de Forma Temporal
 const saveAcademicBackground = () => {
- 
   if (
     academicBackground.value &&
     Object.keys(academicBackground.value).length > 0
@@ -1492,7 +1466,6 @@ const saveAcademicBackground = () => {
         life: 3000,
       });
     } else {
-
       academicBackground.value.idFormacionAcademica = createId();
       allAcademic.value.push(academicBackground.value);
 
@@ -1517,9 +1490,7 @@ const saveAcademicBackground = () => {
 
 //Funcion para Guarda los Servicios Pastorales de Forma Temporal
 const savePastoralServices = () => {
-  
   if (pastoralService.value && Object.keys(pastoralService.value).length > 0) {
-   
     if (pastoralService.value.idServicio) {
       allServices.value[findIndexById(pastoralService.value.idServicio)] =
         pastoralService.value;
@@ -1647,5 +1618,4 @@ const createId = () => {
   }
   return id;
 };
-
 </script>
