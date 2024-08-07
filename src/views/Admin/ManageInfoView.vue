@@ -79,6 +79,93 @@
       </DataTable>
     </div>
 
+
+    <!--Gestionar PopUp-->
+
+    <div class="fullLine">
+      <h3>Gestionar PopUp Novedades</h3>
+      <Divider class="Divider" type="solid" />
+    </div>
+
+    <Button
+      class="buttonSend"
+      label="Agregar Novedad"
+      @click="
+        (visibleNewPopupDialog = true), (newPopUp = {}), (direction = 'PopUp')
+      "
+    />
+
+    <div class="fullLine">
+      <DataTable :value="getNewPopUp">
+        <Column
+          style="min-width: 12rem"
+          field="tituloNovedad"
+          header="Titulo Novedad"
+        ></Column>
+        <Column
+          style="min-width: 12rem"
+          field="descripcionNovedad"
+          header="Descripcion Novedad"
+        ></Column>
+        <Column
+          style="min-width: 8rem"
+          field="estaActivo"
+          header="Estado Actividad"
+        >
+        
+          <template #body="slotProps">
+            <div class="fullLine">
+              <Checkbox
+                v-model="slotProps.data.estaActivo"
+                :binary="true"
+                :readonly="true"
+              />
+              <span class="ml-2">{{
+                getStatusImage(slotProps.data.estaActivo)
+              }}</span>
+            </div>
+          </template>
+        </Column>
+       
+
+        <Column style="min-width: 4rem">
+          <template #body="slotProps">
+            <Button
+              outlined
+              rounded
+              id="tableButton"
+              class="mr-2"
+              @click="editNewPopup(slotProps.data)"
+            >
+              <div class="icon-wrapper">
+                <span class="material-symbols-outlined icon">edit_square</span>
+              </div>
+            </Button>
+
+            <Button
+              outlined
+              rounded
+              severity="danger"
+              id="tableButton"
+              class="mr-2"
+              @click="
+                {
+                  direction = 'PopUp';
+                  deleteCommunityDialog(slotProps.data);
+                }
+              "
+            >
+              <div class="icon-wrapper">
+                <span class="material-symbols-outlined icon">delete</span>
+              </div>
+            </Button>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
+
+
+
     <!--Gestionar Actividades-->
 
     <div class="fullLine">
@@ -347,7 +434,7 @@
       </Dialog>
     </div>
 
-    <!--Agregar noticias recientes-->
+    <!--Agregar Actividades-->
 
     <div class="fullLine">
       <Dialog
@@ -572,6 +659,98 @@
       </Dialog>
     </div>
 
+    <!--Agregar Novedades-->
+
+    <div class="fullLine">
+      <Dialog
+        v-model:visible="visibleNewPopupDialog"
+        modal
+        header="Novedades"
+        class="w-6"
+      >
+        <div class="block">
+          <FloatLabel class="FloatLabel">
+            <InputText
+              maxlength="40"
+              class="inputsLogin"
+              id="titleNewPopup"
+              v-model="newPopUp.tituloNovedad"
+              required="true"
+              :class="{
+                'p-invalid': submitted && !newPopUp.tituloNovedad,
+              }"
+            />
+            <label
+              for="titleNewPopup"
+              :class="{
+                'p-error': submitted && !newPopUp.tituloNovedad,
+              }"
+            >
+              {{
+                submitted && !activityInfo.tituloActividad
+                  ? "Titulo de la Novedad es Requerido"
+                  : "Titulo de la Novedad"
+              }}
+            </label>
+          </FloatLabel>
+        </div>
+
+        <div class="fullLineText">
+          <FloatLabel class="FloatLabel">
+            <Textarea
+              maxlength="40"
+              class="textLogin"
+              id="descriptionNewPopup"
+              v-model="newPopUp.descripcionNovedad"
+              required="true"
+              :class="{
+                'p-invalid': submitted && !newPopUp.descripcionNovedad,
+              }"
+            />
+            <label
+              for="descriptionNewPopup"
+              :class="{
+                'p-error': submitted && !newPopUp.descripcionNovedad,
+              }"
+            >
+              {{
+                submitted && !newPopUp.descripcionNovedad
+                  ? "Descripcion de la Novedad es Requerido"
+                  : "Descripcion de la Novedad"
+              }}
+            </label>
+          </FloatLabel>
+        </div>
+
+
+        <div class="block">
+          <Checkbox v-model="newPopUp.estaActivo" :binary="true" />
+          <label for="ingredient1" class="ml-2"> Esta Activa? </label>
+        </div>
+
+
+        <div class="flex justify-content-end gap-2">
+          <Button
+            class="buttonSend"
+            type="button"
+            label="Cancelar"
+            @click="(newPopUp = {}), (visibleNewPopupDialog = false)"
+          ></Button>
+          <Button
+            class="buttonSend"
+            type="submit"
+            label="Guardar"
+            :loading="loading"
+            @click="saveNewPopup"
+          ></Button>
+        </div>
+      </Dialog>
+    </div>
+
+
+
+
+
     <!--Verificacion de Eliminacion-->
 
     <div class="fullLine">
@@ -614,6 +793,14 @@
             :loading="loading"
             @click="deleteVacancy()"
           ></Button>
+          <Button
+            v-if="direction == 'PopUp'"
+            class="buttonSend"
+            type="submit"
+            label="Eliminar"
+            :loading="loading"
+            @click="deleteNewPopup()"
+          ></Button>
         </div>
       </Dialog>
     </div>
@@ -651,6 +838,7 @@ const toast = useToast();
 const submitted = ref(false);
 const visibleCommunityDialog = ref(false);
 const visibleActivityDialog = ref(false);
+const visibleNewPopupDialog= ref(false);
 const visibleVacancyDialog = ref(false);
 const loading = ref(false);
 const visibleCarouselDeleteDialog = ref(false);
@@ -685,6 +873,14 @@ const activityInfo = ref({});
 const getVacancy = ref();
 const vacancy = ref({});
 
+
+//========================================================
+//Variables de Novedades
+//========================================================
+const getNewPopUp = ref();
+const newPopUp = ref({});
+
+
 //========================================================
 //Mounted
 //========================================================
@@ -701,6 +897,9 @@ onMounted(async () => {
 
   const dataVacancy = await supabase.from("Vocalias").select();
   getVacancy.value = dataVacancy.data;
+
+  const dataNewPopUp= await supabase.from("Novedades").select();
+  getNewPopUp.value=dataNewPopUp.data;
 });
 
 //========================================================
@@ -784,6 +983,10 @@ const deleteCommunityDialog = (prod) => {
 
   if (direction.value == "Vacancy") {
     vacancy.value = { ...prod };
+  }
+
+  if (direction.value == "PopUp") {
+    newPopUp.value = { ...prod };
   }
 };
 
@@ -1047,7 +1250,7 @@ const deleteActivity = async () => {
   visibleCarouselDeleteDialog.value = false;
 };
 
-//Sirve para guardar actividad
+//Sirve para guardar vocalia
 
 const saveVacancy = async () => {
   try {
@@ -1110,14 +1313,14 @@ const saveVacancy = async () => {
   } catch (error) {}
 };
 
-//Sirve para editar la actividad
+//Sirve para editar la vocalia
 const editVacancy = (prod) => {
   vacancy.value = { ...prod };
   isEditing.value = true;
   visibleVacancyDialog.value = true;
 };
 
-//Sirve para eliminar la actividad
+//Sirve para eliminar la vocalia
 const deleteVacancy = async () => {
   loading.value = true;
 
@@ -1165,11 +1368,84 @@ const onFileChange = (event) => {
 
 };
 
+//Para redirigir
 const goToLink = (link) => {
     if (link) {
       window.open(link, "_blank");
     }
   };
+
+//Agregar Mensaje Inicial
+const saveNewPopup = async () => {
+  try {
+    loading.value = true;
+    submitted.value = true;
+    const { data: insertMessage, error: messageError } = await supabase
+      .from("Novedades")
+      .upsert(newPopUp.value)
+      .select();
+
+    if (!messageError) {
+      const dataGet = await supabase.from("Novedades").select();
+
+      getNewPopUp.value = dataGet.data;
+    }
+
+    if (isEditing.value == true) {
+      toast.add({
+        severity: "success",
+        summary: "Mensaje Inicial Actualizado Exitosamente",
+        detail: "Mensaje Inicial Actualizado",
+        life: 3000,
+      });
+    } else {
+      toast.add({
+        severity: "success",
+        summary: "Mensaje Añadido Exitosamente",
+        detail: "Mensaje Inicial Añadido",
+        life: 3000,
+      });
+    }
+
+    visibleNewPopupDialog.value = false;
+    submitted.value=false;
+    loading.value = false;
+    isEditing.value = false;
+  } catch (error) {}
+};
+
+//Editar Mensaje
+const editNewPopup = async (prod) => {
+  newPopUp.value = { ...prod };
+  isEditing.value = true;
+  visibleNewPopupDialog.value = true;
+};
+
+//Eliminar Mensaje
+const deleteNewPopup = async () => {
+  submitted.value=true;
+  loading.value=true;
+  const { data: deleteData, error: deleteDataError } = await supabase
+    .from("Novedades")
+    .delete()
+    .eq("idNovedad", newPopUp.value.idNovedad);
+
+  if (!deleteDataError) {
+    const dataGet = await supabase.from("Novedades").select();
+
+    getNewPopUp.value = dataGet.data;
+  }
+
+  toast.add({
+    severity: "success",
+    summary: "Novedad Eliminada Exitosamente",
+    detail: "Novedad Eliminada",
+    life: 3000,
+  });
+
+  loading.value = false;
+  visibleCarouselDeleteDialog.value = false;
+};
 
 //========================================================
 </script>

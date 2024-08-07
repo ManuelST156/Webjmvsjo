@@ -106,7 +106,7 @@ import { createClient } from "@supabase/supabase-js";
 //Variables de Estado
 //========================================================//
 
-const userStatus = ref(sessionStorage.getItem("userRol"));
+const userStatus = ref(localStorage.getItem("userRol"));
 
 
 //========================================================//
@@ -145,8 +145,8 @@ const isAuthenticated = computed(() => !!localStorage.getItem("tokenJMV"));
 //========================================================//
 const logOut = async () => {
   localStorage.removeItem("tokenJMV");
-  sessionStorage.removeItem("userRol");
-  console.log("se borro", sessionStorage.getItem("userRol"));
+  localStorage.removeItem("userRol");
+  console.log("se borro", localStorage.getItem("userRol"));
 
   const { error } = await supabase.auth.signOut();
 

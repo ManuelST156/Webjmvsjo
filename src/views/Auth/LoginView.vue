@@ -267,9 +267,9 @@ const login = async () => {
         const userStatus=await getCurrentUser(data.user.id);
         if(userStatus==='Admin')
         {
-          sessionStorage.setItem("userRol", userStatus);
+          localStorage.setItem("userRol", userStatus);
 
-          console.log(sessionStorage.getItem("userRol")); 
+        
         }
 
 

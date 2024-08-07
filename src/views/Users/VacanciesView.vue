@@ -146,7 +146,7 @@ const loading=ref(false);
 //Variable de Estado
 //========================================================
 
-const userStatus = ref(sessionStorage.getItem("userRol"));
+const userStatus = ref(localStorage.getItem("userRol"));
 
 //========================================================
 //onMounted - Funciones al cargar pagina

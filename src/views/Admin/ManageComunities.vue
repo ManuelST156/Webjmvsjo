@@ -332,6 +332,7 @@ const saveNewComunity = async () => {
     }
 
     isEditComunity.value = false;
+    submitted.value=false;
     visibleComunityDialog.value = false;
   } catch (error) {
     toast.add({

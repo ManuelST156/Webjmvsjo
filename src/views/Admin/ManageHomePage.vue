@@ -785,6 +785,7 @@ const saveImageCarousel = async () => {
     }
 
     visibleCarouselDialog.value = false;
+    submitted.value=false;
     loading.value = false;
     isEditing.value = false;
   } catch (error) {}
@@ -989,6 +990,7 @@ const saveRecentNew = async () => {
     }
 
     visibleNewsDialog.value = false;
+    submitted.value=false;
     loading.value = false;
     isEditing.value = false;
   } catch (error) {}
@@ -1063,6 +1065,7 @@ const saveMessage = async () => {
     visibleMessageDialog.value = false;
     loading.value = false;
     isEditing.value = false;
+    submitted.value=false;
   } catch (error) {}
 };
 
@@ -1075,6 +1078,8 @@ const editMessage = async (prod) => {
 
 //Eliminar Mensaje
 const deleteMessage = async () => {
+  submitted.value=true;
+  loading.value=true;
   const { data: deleteData, error: deleteDataError } = await supabase
     .from("MensajesIniciales")
     .delete()
