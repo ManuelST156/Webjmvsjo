@@ -7,7 +7,7 @@
       <div class="conteinerCards">
         <Card
         id="card"
-          style="width: 20rem; overflow: hidden"
+          style="width: 25rem; overflow: hidden"
           v-for="community in communities"
           :key="community.idComunidad"
           class="m-1"
@@ -109,8 +109,8 @@
   }
   
   .imageCard {
-    width: 320px;
-    height: 160px;
+    width: 400px;
+    height: 220px;
   }
   
   ::v-deep(#linkButton.p-button) {

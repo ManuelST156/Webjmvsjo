@@ -7,7 +7,7 @@
     <div class="conteinerCards">
       <Card
       id="card"
-        style="width: 20rem; overflow: hidden"
+        style="width: 25rem; overflow: hidden"
         v-for="vacancy in vacancies"
         :key="vacancy.idVocalia"
         class="m-1"
@@ -57,7 +57,7 @@ const vacancies = ref(); //Guardar los mensajes de la DB
 //========================================================//
 onMounted(async () => {
   const { data: dataVacancy, error: dataVacancyError } = await supabase
-    .from("Vocalias")
+    .from("vocaliasorden")
     .select("*");
 
   vacancies.value = dataVacancy;
@@ -101,8 +101,8 @@ const goToLink = (link) => {
 }
 
 .imageCard {
-  width: 320px;
-  height: 160px;
+  width: 400px;
+  height: 220px;
 }
 
 ::v-deep(#linkButton.p-button) {

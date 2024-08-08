@@ -7,7 +7,7 @@
     <div class="conteinerCards">
       <Card
         id="card"
-        style="width: 20rem; overflow: hidden"
+        style="width: 25rem; overflow: hidden"
         v-for="activity in activities"
         :key="activity.idInfoPaginaActividad"
         class="m-1"
@@ -127,8 +127,8 @@ strong {
 }
 
 .imageCard {
-  width: 320px;
-  height: 160px;
+  width: 400px;
+  height: 220px;
 }
 
 ::v-deep(#linkButton.p-button) {

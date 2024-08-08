@@ -412,7 +412,7 @@
         <div class="fullLineText">
           <FloatLabel class="FloatLabel">
             <Textarea
-              maxlength="40"
+              maxlength="500"
               class="textLogin"
               id="descriptionNew"
               v-model="recentNew.descripcionNoticia"
@@ -543,7 +543,7 @@
         <div class="fullLineText">
           <FloatLabel class="FloatLabel">
             <Textarea
-              maxlength="40"
+              maxlength="500"
               class="textLogin"
               id="descriptionMessage"
               v-model="initialMessage.descripcionMensajeInicio"

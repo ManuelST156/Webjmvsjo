@@ -12,14 +12,17 @@
         v-model:visible="visibleNewPopUpDialog"
         modal
         header="Novedades"
-        class="w-6"
+        class="w-10 h-auto"
+        
       >
-      <div class="block">
+      <div>
 
-        <h2>{{ getNewPopUp.tituloNovedad }}</h2>
+        <h2 class="popupElement">{{ getNewPopUp.tituloNovedad }}</h2>
 
-        <p>{{ getNewPopUp.descripcionNovedad }}</p>
+      </div>
 
+      <div>
+        <p class="popupElement" >{{ getNewPopUp.descripcionNovedad }}</p>
       </div>
       </Dialog>
     </div>
@@ -93,5 +96,9 @@ onMounted(async () => {
   margin: 10px 0;
   flex: 1 1 calc(50% - 20px);
   min-width: 200px;
+}
+
+.popupElement{
+  margin: 10px 0;
 }
 </style>

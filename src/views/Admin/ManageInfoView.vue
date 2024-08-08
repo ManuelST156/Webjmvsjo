@@ -473,7 +473,7 @@
         <div class="fullLineText">
           <FloatLabel class="FloatLabel">
             <Textarea
-              maxlength="40"
+              maxlength="500"
               class="textLogin"
               id="descriptionActivity"
               v-model="activityInfo.descripcionActividad"
@@ -594,7 +594,7 @@
         <div class="fullLineText">
           <FloatLabel class="FloatLabel">
             <Textarea
-              maxlength="40"
+              maxlength="500"
               class="textLogin"
               id="descriptionVocalia"
               v-model="vacancy.descripcionVocalia"
@@ -698,7 +698,7 @@
         <div class="fullLineText">
           <FloatLabel class="FloatLabel">
             <Textarea
-              maxlength="40"
+              maxlength="500"
               class="textLogin"
               id="descriptionNewPopup"
               v-model="newPopUp.descripcionNovedad"
