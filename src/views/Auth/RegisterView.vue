@@ -360,7 +360,7 @@ const SaveRegister = async () => {
           
 
           const dataUsers = await supabase
-            .from("usuarioscredenciales")
+            .from("credenciales")
             .select("*");
           
           const data = dataUsers.data;
