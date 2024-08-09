@@ -293,6 +293,7 @@ const login = async () => {
         } 
       } catch (error) {
         loading.value = false;
+        console.log(error);
           toast.add({
             severity: "error",
             summary: "Correo o Contraseña Incorrectos",
@@ -345,3 +346,7 @@ const validateEmail = (email) => {
   return emailRegex.test(email);
 };
 </script>
+
+
+
+

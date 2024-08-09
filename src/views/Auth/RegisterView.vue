@@ -293,14 +293,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 //========================================================
 
 const toast = useToast();
-const onUpload = () => {
-  toast.add({
-    severity: "info",
-    summary: "Success",
-    detail: "File Uploaded",
-    life: 3000,
-  });
-};
+
 
 //========================================================
 //Variables de Datos
@@ -364,26 +357,26 @@ const SaveRegister = async () => {
             email: registerUser.value.correoUsuario,
             password: password.value,
           });
+          
 
           const dataUsers = await supabase
             .from("usuarioscredenciales")
             .select("*");
-
+          
           const data = dataUsers.data;
 
           const usuarioRegistrado = data.find(
             (user) => user.email == registerUser.value.correoUsuario
           );
-
+          console.log(usuarioRegistrado,"aqui");
           if (usuarioRegistrado) {
             registerUser.value.idAuth = usuarioRegistrado.id;
-
+            console.log("Aqui");
             addUser();
-            const { error } = await supabase.auth.signOut();
 
             toast.add({
               severity: "success",
-              summary: "Registrado Correctamente",
+              summary: "Registrado Correctamente, Valida tu usuario por correo",
               detail: "Registro Completado",
               life: 3000,
             });
@@ -436,10 +429,10 @@ const validateEmail = (email) => {
 //Funcion para añadir usuario creado con sus credenciales a la tabla Usuarios
 const addUser = async () => {
   registerUser.value.idRolUsuario = 2;
-
+  console.log(registerUser.value);
   const upsertData = await supabase
     .from("Usuarios")
-    .upsert([registerUser.value])
+    .upsert(registerUser.value)
     .select();
 };
 </script>

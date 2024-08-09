@@ -1212,6 +1212,7 @@ const saveActivity = async () => {
 
     visibleActivityDialog.value = false;
     loading.value = false;
+    submitted.value = false;
     isEditing.value = false;
   } catch (error) {}
 };
@@ -1308,6 +1309,7 @@ const saveVacancy = async () => {
     }
 
     visibleVacancyDialog.value = false;
+    submitted.value = false;
     loading.value = false;
     isEditing.value = false;
   } catch (error) {}
