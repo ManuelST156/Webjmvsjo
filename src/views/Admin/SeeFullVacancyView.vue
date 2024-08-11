@@ -18,7 +18,7 @@
         <div class="block">
           <FloatLabel class="FloatLabel">
             <InputText
-              v-model="vacancyRequest.nombreVocalia"
+              v-model="vacancyName"
               id="vacancy"
               class="w-full md:w-32rem"
               :readonly="true"
@@ -662,6 +662,7 @@ const formationStage = ref();
 const comunityName = ref();
 const getRequestID = ref();
 const vacancyList = ref();
+const vacancyName=ref();
 
 //========================================================
 //OnMounted
@@ -690,6 +691,7 @@ onMounted(async () => {
       .eq("idSolicitud", getRequestID.value);
 
     vacancyRequest.value = requestGet.data[0];
+    console.log(vacancyRequest.value);
 
     const GetComunity = await supabase
       .from("datoscompletocomunidad")
@@ -721,12 +723,14 @@ onMounted(async () => {
 
     localStorage.removeItem("isSeeing");
     console.log(vacancyList.value);
+
+    vacancyName.value=getVacancyName(vacancyRequest.value.idVocalia);
   }
 });
 
-/* const getVacancyName=(id)=>{
-  const finded=vacancyList.value.find(object=>object.id===id);
+const getVacancyName=(id)=>{
+  const finded=vacancyList.value.find(object=>object.idVocalia===id);
   
   return finded.nombreVocalia;
-} */
+}
 </script>
