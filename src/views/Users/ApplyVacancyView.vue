@@ -389,7 +389,7 @@
             <div class="block">
               <FloatLabel class="FloatLabel">
                 <InputText
-                  maxlength="3"
+                  maxlength="10"
                   class="inputsLogin"
                   id="endYear"
                   v-model="academicBackground.añoFinalizacion"
@@ -589,7 +589,7 @@
           <FloatLabel class="FloatLabel">
             <MultiSelect
               id="sacraments"
-              v-model="vacancyRequest.sacramentosSolicitante"
+              v-model="vacancySacrament"
               :options="sacraments"
               optionLabel="sacraments"
               optionValue="value"
@@ -597,18 +597,18 @@
               required="true"
               :class="{
                 'p-invalid':
-                  submitted && !vacancyRequest.sacramentosSolicitante,
+                  submitted && !vacancySacrament,
               }"
               :maxSelectedLabels="3"
             />
             <label
               for="sacraments"
               :class="{
-                'p-error': submitted && !vacancyRequest.sacramentosSolicitante,
+                'p-error': submitted && !vacancySacrament,
               }"
             >
               {{
-                submitted && !vacancyRequest.sacramentosSolicitante
+                submitted && !vacancySacrament
                   ? "Sacramentos son Requeridos"
                   : "Sacramentos Realizados"
               }}
@@ -716,7 +716,7 @@
             <div class="block">
               <FloatLabel class="FloatLabel">
                 <InputText
-                  maxlength="3"
+                  maxlength="10"
                   class="inputsLogin"
                   id="serviceTime"
                   v-model="pastoralService.duracionServicio"
@@ -1136,6 +1136,7 @@ const fileUpload = ref(null); //Variable para la imagen
 const isEditAcademic = ref(false);
 const isEditService = ref(false);
 const getRequestID = ref();
+const vacancySacrament=ref();
 
 //Variable Array con Datos Predefinidos
 const civilStatus = ref([
@@ -1199,8 +1200,7 @@ onMounted(async () => {
       .eq("idSolicitud", getRequestID.value);
 
     vacancyRequest.value = requestGet.data[0];
-    vacancyRequest.value.sacramentosSolicitante =
-      vacancyRequest.value.sacramentosSolicitante.split(",");
+    vacancyRequest.value.sacramentosSolicitante =vacancySacrament.split(",");
 
     requestAcademicGet.data.forEach((element) => {
       const { idSolicitud, ...newObject } = element;
@@ -1394,7 +1394,7 @@ const saveVacancy = async () => {
     toast.add({
       severity: "error",
       summary: "TTienes Datos Vacio en el Registro",
-      detail: "Datos no Agregados Correctamente",
+      detail: "Datos no Agregados Correctamente: "+ error,
       life: 3000,
     });
    
