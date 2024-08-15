@@ -1,9 +1,11 @@
 <template>
     <main class="im">
         <div class="containerLoading">
-            <video autoplay loop muted class="loading">
+            <!-- <video autoplay loop muted playsinline class="loading">
              <source src="/src/assets/AnimationJMV.mp4" type="video/mp4" alt="">
-            </video>
+            </video> -->
+
+            <img class="loading" src="/src/assets/AnimationPageJMV.gif" alt="">
         </div>
     </main>
 </template>
@@ -11,7 +13,7 @@
 <style>
 
 
-video{
+img{
     max-width: 100%;
     max-height: 100%;
 }

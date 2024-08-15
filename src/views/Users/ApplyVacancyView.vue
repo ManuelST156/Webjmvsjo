@@ -1199,8 +1199,11 @@ onMounted(async () => {
       .select("*")
       .eq("idSolicitud", getRequestID.value);
 
+    
+    
     vacancyRequest.value = requestGet.data[0];
-    vacancyRequest.value.sacramentosSolicitante =vacancySacrament.split(",");
+    vacancySacrament.value =vacancyRequest.value.sacramentosSolicitante.split(",");
+    console.log(vacancyRequest.value);
 
     requestAcademicGet.data.forEach((element) => {
       const { idSolicitud, ...newObject } = element;
@@ -1254,8 +1257,11 @@ const saveVacancy = async () => {
       }
     }
 
+    console.log(vacancySacrament.value);
     vacancyRequest.value.sacramentosSolicitante =
-      vacancyRequest.value.sacramentosSolicitante.join(",");
+      vacancySacrament.value.join(",");
+
+      console.log(vacancyRequest.value);
 
     const { error, data } = await supabase
       .from("Solicitudes")
@@ -1390,7 +1396,9 @@ const saveVacancy = async () => {
     router.push({ path: "/vacantes" }).then(() => {
       window.location.reload();
     });
-  } catch (error) {
+  } 
+  catch (error) {
+    console.log(error);
     toast.add({
       severity: "error",
       summary: "TTienes Datos Vacio en el Registro",
