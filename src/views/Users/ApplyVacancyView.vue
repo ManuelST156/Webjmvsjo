@@ -15,24 +15,23 @@
           <img src="@/assets/Avatar1.png" id="imageUpload" />
         </div>
 
+        <button @click="prueba">prueba</button>
         <div class="block">
           <FloatLabel class="FloatLabel">
-            <Dropdown
-              v-model="vacancyRequest.idVocalia"
+            <MultiSelect
+              :maxSelectedLabels="3"
+              v-model="vacancy"
               id="vacancy"
               :options="vacancyList"
               optionLabel="nombreVocalia"
               optionValue="idVocalia"
               class="w-full md:w-32rem"
               required="true"
-              :class="{ 'p-invalid': submitted && !vacancyRequest.idVocalia }"
+              :class="{ 'p-invalid': submitted && !vacancy }"
             />
-            <label
-              for="vacancy"
-              :class="{ 'p-error': submitted && !vacancyRequest.idVocalia }"
-            >
+            <label for="vacancy" :class="{ 'p-error': submitted && !vacancy }">
               {{
-                submitted && !vacancyRequest.idVocalia
+                submitted && !vacancy
                   ? "Vocalia es Requerido"
                   : "Seleccionar Vocalia"
               }}
@@ -596,8 +595,7 @@
               class="w-full md:w-32rem"
               required="true"
               :class="{
-                'p-invalid':
-                  submitted && !vacancySacrament,
+                'p-invalid': submitted && !vacancySacrament,
               }"
               :maxSelectedLabels="3"
             />
@@ -1136,7 +1134,8 @@ const fileUpload = ref(null); //Variable para la imagen
 const isEditAcademic = ref(false);
 const isEditService = ref(false);
 const getRequestID = ref();
-const vacancySacrament=ref();
+const vacancySacrament = ref();
+const vacancy = ref();
 
 //Variable Array con Datos Predefinidos
 const civilStatus = ref([
@@ -1185,7 +1184,7 @@ onMounted(async () => {
     getRequestID.value = localStorage.getItem("isEditing");
 
     const requestGet = await supabase
-      .from("Solicitudes")
+      .from("solicitudvocaliaconsulta")
       .select("*")
       .eq("idSolicitud", getRequestID.value);
 
@@ -1199,11 +1198,15 @@ onMounted(async () => {
       .select("*")
       .eq("idSolicitud", getRequestID.value);
 
-    
-    
+    console.log(requestGet.data);
+    const VacancyValues = requestGet.data.map((record) => record.idVocalia);
+    console.log(VacancyValues);
+
     vacancyRequest.value = requestGet.data[0];
-    vacancySacrament.value =vacancyRequest.value.sacramentosSolicitante.split(",");
-    console.log(vacancyRequest.value);
+    vacancySacrament.value =
+      vacancyRequest.value.sacramentosSolicitante.split(",");
+
+    vacancy.value = VacancyValues;
 
     requestAcademicGet.data.forEach((element) => {
       const { idSolicitud, ...newObject } = element;
@@ -1225,6 +1228,18 @@ onMounted(async () => {
 //========================================================
 //Methods
 //========================================================
+
+const prueba = () => {
+  console.log(vacancy.value);
+  vacancy.value.forEach(async (element) => {
+    const vacancyBridge = {
+      idSolicitud: 30,
+      idVocalia: element,
+    };
+
+    console.log(vacancyBridge);
+  });
+};
 
 //Metodo para Guardar Solicitudes
 const saveVacancy = async () => {
@@ -1261,14 +1276,40 @@ const saveVacancy = async () => {
     vacancyRequest.value.sacramentosSolicitante =
       vacancySacrament.value.join(",");
 
-      console.log(vacancyRequest.value);
+    console.log(vacancyRequest.value);
+
+    //Agregamos los datos de la solicitud a la tabla
+    const { idVocalia, ...newObject } = vacancyRequest.value;
 
     const { error, data } = await supabase
       .from("Solicitudes")
-      .upsert(vacancyRequest.value)
+      .upsert(newObject)
       .select();
 
     const requestID = data[0].idSolicitud;
+    console.log(requestID);
+
+    const { errorDelete, dataDelete } = await supabase
+      .from("SolicitudesVocalia")
+      .delete()
+      .eq("idSolicitud", requestID);
+
+    //Añadir varias vocalias
+    vacancy.value.forEach(async (element) => {
+      console.log(requestID);
+
+      const vacancyBridge = {
+        idSolicitud: requestID,
+        idVocalia: element,
+      };
+
+      console.log(vacancyBridge);
+
+      const { error, data } = await supabase
+        .from("SolicitudesVocalia")
+        .upsert(vacancyBridge)
+        .select();
+    });
 
     //Agregamos los datos de Formacion a su tabla en la DB
     if (allAcademic.value.length != 0) {
@@ -1280,13 +1321,11 @@ const saveVacancy = async () => {
                 .from("FormacionAcademicaSolicitud")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
-              
 
               const { data: deleteDataAcademic } = await supabase
                 .from("FormacionAcademica")
                 .delete()
                 .eq("idFormacionAcademica", element.idFormacionAcademica);
-              
             });
           }
 
@@ -1300,7 +1339,7 @@ const saveVacancy = async () => {
             .from("FormacionAcademica")
             .upsert(newObject)
             .select();
-          
+
           const bridgeTable = {
             idSolicitud: requestID,
             idFormacionAcademica: data[0].idFormacionAcademica,
@@ -1310,7 +1349,6 @@ const saveVacancy = async () => {
             .from("FormacionAcademicaSolicitud")
             .upsert(bridgeTable)
             .select();
-          
         }
       });
     }
@@ -1336,7 +1374,6 @@ const saveVacancy = async () => {
             .from("Servicios")
             .upsert(element)
             .select();
-          
         } else {
           const { idServicio, ...newObject } = element;
           console.log(newObject);
@@ -1344,7 +1381,6 @@ const saveVacancy = async () => {
             .from("Servicios")
             .upsert(newObject)
             .select();
-          
 
           const bridgeTable = {
             idSolicitud: requestID,
@@ -1355,7 +1391,6 @@ const saveVacancy = async () => {
             .from("ServiciosSolicitud")
             .upsert(bridgeTable)
             .select();
-          
         }
       });
     }
@@ -1396,16 +1431,14 @@ const saveVacancy = async () => {
     router.push({ path: "/vacantes" }).then(() => {
       window.location.reload();
     });
-  } 
-  catch (error) {
+  } catch (error) {
     console.log(error);
     toast.add({
       severity: "error",
       summary: "TTienes Datos Vacio en el Registro",
-      detail: "Datos no Agregados Correctamente: "+ error,
+      detail: "Datos no Agregados Correctamente: " + error,
       life: 3000,
     });
-   
 
     loading.value = false;
   }

@@ -44,7 +44,13 @@
                     severity="danger"
                     id="crudButton"
                     class="mr-1"
-                    @click="deleteDialog(request.idSolicitud)"
+                    @click="
+                      deleteDialog(
+                        request.idSolicitud,
+                        request.codigoImagen,
+                        request.idVocalia
+                      )
+                    "
                   >
                     <div class="icon-wrapper">
                       <span class="material-symbols-outlined icon">delete</span>
@@ -58,7 +64,9 @@
                       severity="info"
                       id="crudButton"
                       class="mr-1"
-                      @click="seeRequest(request.idSolicitud,request.codigoImagen)"
+                      @click="
+                        seeRequest(request.idSolicitud, request.codigoImagen)
+                      "
                     >
                       <div class="icon-wrapper">
                         <span class="material-symbols-outlined icon"
@@ -75,9 +83,9 @@
       </div>
     </div>
 
-     <!--Verificacion de Eliminacion-->
+    <!--Verificacion de Eliminacion-->
 
-     <div class="fullLine">
+    <div class="fullLine">
       <Dialog
         v-model:visible="visibleDeleteDialog"
         modal
@@ -98,7 +106,7 @@
             type="submit"
             label="Eliminar"
             :loading="loading"
-            @click="deleteRequest(toDelete,toDeleteImage)"
+            @click="deleteRequest(toDelete, toDeleteImage, toDeleteVacancy)"
           ></Button>
         </div>
       </Dialog>
@@ -116,7 +124,6 @@ import { jwtDecode } from "jwt-decode";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
-
 //========================================================
 //Variables de Supabase
 //========================================================
@@ -130,8 +137,6 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const toast = useToast();
 
-
-
 //========================================================
 //Variables de Datos
 //========================================================
@@ -139,9 +144,10 @@ const toast = useToast();
 const listRequest = ref(null);
 const router = useRouter();
 const visibleDeleteDialog = ref(false);
-const toDelete=ref();
-const toDeleteImage=ref();
-const loading=ref(false);
+const toDelete = ref();
+const toDeleteImage = ref();
+const toDeleteVacancy = ref();
+const loading = ref(false);
 //========================================================
 //onMounted
 //========================================================
@@ -168,93 +174,105 @@ const editRequest = async (id) => {
 };
 
 //Abrir dialog de advertencia
-const deleteDialog = (id,codigo) => {
+const deleteDialog = async (id, codigo, vocalia) => {
   visibleDeleteDialog.value = true;
-  toDelete.value=id;
-  toDeleteImage.value=codigo;
+  toDelete.value = id;
+  toDeleteImage.value = codigo;
+  toDeleteVacancy.value = vocalia;
 };
 
 //Permite eliminar alguna ficha de un usuario
-const deleteRequest = async (id,codigo) => {
+const deleteRequest = async (id, codigo, vocalia) => {
   try {
-    loading.value=true;
-    //Select
-  const { data: selectServices } = await supabase
-    .from("ServiciosSolicitud")
-    .select("idServicio")
-    .eq("idSolicitud", id);
+    loading.value = true;
 
-  const { data: selectAcademic } = await supabase
-    .from("FormacionAcademicaSolicitud")
-    .select("idFormacionAcademica")
-    .eq("idSolicitud", id);
-
-  //delete
-
-  const servicesRequestDelete = await supabase
-    .from("ServiciosSolicitud")
-    .delete()
-    .eq("idSolicitud", id);
-
-  const academicRequestDelete = await supabase
-    .from("UsuarioSolicitud")
-    .delete()
-    .eq("idSolicitud", id);
-
-  const userRequestDelete = await supabase
-    .from("FormacionAcademicaSolicitud")
-    .delete()
-    .eq("idSolicitud", id);
-
-  selectServices.forEach(async (element) => {
-    const servicesDelete = await supabase
-      .from("Servicios")
+    //Delete vocalia
+    const vacancyDelete = await supabase
+      .from("SolicitudesVocalia")
       .delete()
-      .eq("idServicio", element.idServicio);
-  });
+      .eq("idSolicitud", id)
+      .eq("idVocalia", vocalia);
 
-  selectAcademic.forEach(async (element) => {
-    const academicDelete = await supabase
-      .from("FormacionAcademica")
-      .delete()
-      .eq("idFormacionAcademica", element.idFormacionAcademica);
-  });
+    const { data: requestExisting } = await supabase
+      .from("SolicitudesVocalia")
+      .select("*")
+      .eq("idSolicitud", id);
 
-  const requestDelete = await supabase
-    .from("Solicitudes")
-    .delete()
-    .eq("idSolicitud", id);
+    if (requestExisting.length == 0) {
+      //Select
+      const { data: selectServices } = await supabase
+        .from("ServiciosSolicitud")
+        .select("idServicio")
+        .eq("idSolicitud", id);
 
-    const deleteStorage = await supabase.storage
-      .from("imageVacancy")
-      .remove(codigo);
+      const { data: selectAcademic } = await supabase
+        .from("FormacionAcademicaSolicitud")
+        .select("idFormacionAcademica")
+        .eq("idSolicitud", id);
 
-  const { data, error } = await supabase
-    .from("vistapreviasolicitud")
-    .select("*");
+      //delete
 
-  listRequest.value = data;
+      const servicesRequestDelete = await supabase
+        .from("ServiciosSolicitud")
+        .delete()
+        .eq("idSolicitud", id);
 
-  loading.value=false;
-  visibleDeleteDialog.value=false;
-  
+      const academicRequestDelete = await supabase
+        .from("UsuarioSolicitud")
+        .delete()
+        .eq("idSolicitud", id);
 
-  toast.add({
-        severity: "success",
-        summary: "Registro Eliminado",
-        detail: "Solicitud Eliminada",
-        life: 3000,
+      const userRequestDelete = await supabase
+        .from("FormacionAcademicaSolicitud")
+        .delete()
+        .eq("idSolicitud", id);
+
+      selectServices.forEach(async (element) => {
+        const servicesDelete = await supabase
+          .from("Servicios")
+          .delete()
+          .eq("idServicio", element.idServicio);
       });
 
+      selectAcademic.forEach(async (element) => {
+        const academicDelete = await supabase
+          .from("FormacionAcademica")
+          .delete()
+          .eq("idFormacionAcademica", element.idFormacionAcademica);
+      });
 
+      const requestDelete = await supabase
+        .from("Solicitudes")
+        .delete()
+        .eq("idSolicitud", id);
 
+      const deleteStorage = await supabase.storage
+        .from("imageVacancy")
+        .remove(codigo);
+    }
+
+    const { data, error } = await supabase
+      .from("vistapreviasolicitud")
+      .select("*");
+
+    listRequest.value = data;
+
+    loading.value = false;
+    visibleDeleteDialog.value = false;
+
+    toast.add({
+      severity: "success",
+      summary: "Registro Eliminado",
+      detail: "Solicitud Eliminada",
+      life: 3000,
+    });
   } catch (error) {
     toast.add({
-        severity: "error",
-        summary: "Error Registro Eliminado",
-        detail: "Solicitud No Eliminada",
-        life: 3000,
-      });
+      severity: "error",
+      summary: "Error Registro Eliminado",
+      detail: "Solicitud No Eliminada",
+      life: 3000,
+    });
   }
 };
 
@@ -262,8 +280,6 @@ const deleteRequest = async (id,codigo) => {
 const seeRequest = (id) => {
   localStorage.setItem("isSeeing", id);
 };
-
-
 </script>
 
 <style lang="scss" scoped>
