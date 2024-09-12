@@ -15,7 +15,6 @@
           <img src="@/assets/Avatar1.png" id="imageUpload" />
         </div>
 
-        <button @click="prueba">prueba</button>
         <div class="block">
           <FloatLabel class="FloatLabel">
             <MultiSelect
@@ -1229,17 +1228,6 @@ onMounted(async () => {
 //Methods
 //========================================================
 
-const prueba = () => {
-  console.log(vacancy.value);
-  vacancy.value.forEach(async (element) => {
-    const vacancyBridge = {
-      idSolicitud: 30,
-      idVocalia: element,
-    };
-
-    console.log(vacancyBridge);
-  });
-};
 
 //Metodo para Guardar Solicitudes
 const saveVacancy = async () => {
