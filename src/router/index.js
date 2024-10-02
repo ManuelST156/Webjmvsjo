@@ -114,7 +114,6 @@ const router = createRouter({
       path: "/verPostulacion",
       name: "viewPostulation",
       component: SeeFullVacancyView,
-      meta: { requiresAuth: true, roles: "Admin" },
     },
     {
       path: "/administrarUsuarios",
