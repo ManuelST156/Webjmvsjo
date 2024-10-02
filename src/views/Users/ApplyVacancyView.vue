@@ -1,5 +1,48 @@
 <template>
-  <Toast />
+  <Toast
+      severity="custom"
+      position="top-right"
+      group="headless"
+      @close="visible = false"
+    >
+      <template #container="{ message, closeCallback }">
+        <section
+          class="flex p-2 gap-3 w-full bg-black-alpha-90"
+          style="border-radius: 10px"
+        >
+          <i class="pi pi-cloud-upload text-primary-500 text-2xl"></i>
+          <div class="flex flex-column gap-3 w-full">
+            <p class="m-0 font-semibold text-base text-white">
+              {{ message.summary }}
+            </p>
+            <p class="m-0 text-base text-700">{{ message.detail }}</p>
+            <div class="flex flex-column gap-2">
+              <ProgressBar
+                :value="progress"
+                :showValue="false"
+                :style="{ height: '4px' }"
+              ></ProgressBar>
+              <label class="text-right text-xs text-white"
+                >{{ progress }}% Subido...</label
+              >
+            </div>
+          </div>
+          <button
+            @click="closeCallback()"
+            class="p-button p-button-text p-button-secondary ml-auto"
+            style="
+              font-size: 1.5rem;
+              color: white;
+              background: transparent;
+              border: none;
+            "
+          >
+            &times;
+            <!-- símbolo de multiplicación como 'X' -->
+          </button>
+        </section>
+      </template>
+    </Toast>
   <main class="LoginRegister">
     <div id="containerRegister" class="card flex justify-content-center">
       <h2 id="Tittle">
@@ -222,17 +265,35 @@
         </div>
 
         <div class="block">
-          <Dropdown
+          <FloatLabel class="FloatLabel">
+            
+            <Dropdown
             v-model="vacancyRequest.estadoCivilSolicitante"
             :options="civilStatus"
             optionLabel="status"
             optionValue="value"
             placeholder="Estado Civil"
             class="w-full md:w-32rem"
-          />
+            />
+
+            <label
+              for="address"
+              :class="{
+                'p-error': submitted && !vacancyRequest.estadoCivilSolicitante,
+              }"
+            >
+              {{
+                submitted && !vacancyRequest.estadoCivilSolicitante
+                  ? "Estado Civil es requerido"
+                  : "Estado Civil"
+              }}
+            </label>
+          </FloatLabel>
+          
         </div>
 
         <div class="block">
+          <FloatLabel class="FloatLabel">
           <Dropdown
             id="dropLogin"
             v-model="vacancyRequest.sexoSolicitante"
@@ -242,6 +303,20 @@
             placeholder="Sexo"
             class="w-full md:w-32rem"
           />
+
+          <label
+              for="address"
+              :class="{
+                'p-error': submitted && !vacancyRequest.sexoSolicitante,
+              }"
+            >
+              {{
+                submitted && !vacancyRequest.sexoSolicitante
+                  ? "Sexo del Postulante es requerida"
+                  : "Sexo del Postulante"
+              }}
+            </label>
+          </FloatLabel>
         </div>
 
         <div class="block">
@@ -619,7 +694,10 @@
         <!--Servicios Pastorales-->
         <!--========================================================-->
         <div class="fullLine">
-          <h3>Servicios Pastorales</h3>
+          <h3>
+            Servicios Pastorales
+          </h3>
+
           <Divider class="Divider" type="solid" />
         </div>
 
@@ -790,7 +868,7 @@
       <div class="card flex justify-content-center">
         <Button
           class="buttonSend"
-          label="Registrar"
+          label="Guardar Registro"
           @click="saveVacancy"
           type="submit"
           :loading="loading"
@@ -1070,12 +1148,13 @@ input[type="file"] {
 //========================================================
 //Imports de Modulos
 //========================================================
-import { ref, onMounted } from "vue";
+import { ref, onMounted, h } from "vue";
 import { useToast } from "primevue/usetoast";
 import { useRouter } from "vue-router";
 import { createClient } from "@supabase/supabase-js";
 import { uid } from "uid";
 import { jwtDecode } from "jwt-decode";
+/* import { Tooltip } from 'primevue/tooltip'; */
 
 //========================================================
 //Variables de Supabase
@@ -1090,6 +1169,9 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 //========================================================
 
 const toast = useToast();
+const visible = ref(false);
+const progress = ref(0);
+const interval = ref();
 
 //========================================================
 //Variable de JWT para manejo de tokens
@@ -1106,6 +1188,7 @@ const visibleServiceDialog = ref(false);
 const loading = ref(false);
 const isEditing = ref(false);
 const router = useRouter();
+
 
 //========================================================
 //Variables de datos
@@ -1172,6 +1255,13 @@ const sacraments = ref([
 //========================================================
 
 onMounted(async () => {
+
+
+  if (interval.value) {
+    clearInterval(interval.value);
+  }
+
+
   let vacancyGet = await supabase.from("Vocalias").select("*");
 
   let comunityGet = await supabase.from("datoscompletocomunidad").select("*");
@@ -1297,7 +1387,10 @@ const saveVacancy = async () => {
         .from("SolicitudesVocalia")
         .upsert(vacancyBridge)
         .select();
+        console.log(data,error,vacancyBridge);
     });
+
+   
 
     //Agregamos los datos de Formacion a su tabla en la DB
     if (allAcademic.value.length != 0) {
@@ -1400,25 +1493,24 @@ const saveVacancy = async () => {
         .upsert(userRequestData)
         .select();
 
-      toast.add({
-        severity: "success",
-        summary: "Registro Agregado",
-        detail: "Solicitud Creada",
-        life: 3000,
-      });
-    } else {
-      toast.add({
-        severity: "success",
-        summary: "Registro Actualizado",
-        detail: "Solicitud Actualizada",
-        life: 3000,
-      });
-    }
+        // Mostrar el toast con barra de progreso para la creación de la solicitud
+        show('Registro Creado','Guardando Solicitud');
 
-    loading.value = false;
-    router.push({ path: "/vacantes" }).then(() => {
-      window.location.reload();
-    });
+    } else {
+       // Mostrar el toast con barra de progreso para la actualización de la solicitud
+       show('Registro Actualizado','Guardando Solicitud');
+    }
+    /* aqui */
+    
+    
+    setTimeout(() => {
+      loading.value = false;
+      router.push({ path: "/vacantes" }).then(() => {
+        window.location.reload();
+      });
+    }, 3000);
+
+
   } catch (error) {
     console.log(error);
     toast.add({
@@ -1648,4 +1740,36 @@ const createId = () => {
   }
   return id;
 };
+
+
+
+const show = (summary,detail) => {
+  if (!visible.value) {
+    toast.add({
+      severity: 'custom',
+      summary: summary,
+      detail: detail,
+      group: 'headless',
+      life: 3000
+    });
+    visible.value = true;
+    progress.value = 0;
+
+    if (interval.value) {
+      clearInterval(interval.value);
+    }
+
+    interval.value = setInterval(() => {
+      if (progress.value <= 100) {
+        progress.value = progress.value + 30;
+      }
+
+      if (progress.value >= 100) {
+        progress.value = 100;
+        clearInterval(interval.value);
+      }
+    }, 500);
+  }
+};
+
 </script>

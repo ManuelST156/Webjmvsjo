@@ -23,6 +23,7 @@
               class="w-full md:w-32rem"
               :readonly="true"
             />
+            <label for="vacancy">Vocalia/s Aplicadas</label>
           </FloatLabel>
         </div>
 
@@ -662,7 +663,7 @@ const formationStage = ref();
 const comunityName = ref();
 const getRequestID = ref();
 const vacancyList = ref();
-const vacancyName=ref();
+const vacancyName = ref();
 
 //========================================================
 //OnMounted
@@ -680,6 +681,7 @@ onMounted(async () => {
       .select("*")
       .eq("idSolicitud", getRequestID.value);
 
+
     const requestServicesGet = await supabase
       .from("obtenerservicios")
       .select("*")
@@ -690,19 +692,21 @@ onMounted(async () => {
       .select("*")
       .eq("idSolicitud", getRequestID.value);
 
+    const vacancyNameList = await supabase
+      .from("nombrevocaliasolicitud")
+      .select("*")
+      .eq("idSolicitud", getRequestID.value);
+
+    vacancyName.value = vacancyNameList.data
+      .map((vocalia) => vocalia.nombreVocalia)
+      .join(" -|- ");
+
     vacancyRequest.value = requestGet.data[0];
-    console.log(vacancyRequest.value);
 
     const GetComunity = await supabase
       .from("datoscompletocomunidad")
       .select("*")
       .eq("idComunidad", vacancyRequest.value.idComunidad);
-
-    const finded = vacancyList.value.find(
-      (object) => object.id === vacancyRequest.idVocalia
-    );
-
-    vacancyRequest.value.nombreVocalia = finded.nombreVocalia;
 
     comunityName.value = GetComunity.data[0].nombreComunidad;
     formationStage.value = GetComunity.data[0].nombreEtapa;
@@ -722,15 +726,6 @@ onMounted(async () => {
     isSeeing.value = !!localStorage.getItem("isSeeing");
 
     localStorage.removeItem("isSeeing");
-    console.log(vacancyList.value);
-
-    vacancyName.value=getVacancyName(vacancyRequest.value.idVocalia);
   }
 });
-
-const getVacancyName=(id)=>{
-  const finded=vacancyList.value.find(object=>object.idVocalia===id);
-  
-  return finded.nombreVocalia;
-}
 </script>

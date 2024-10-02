@@ -22,6 +22,7 @@ import VacancyInfo from "@/views/Users/VacancyInfo.vue";
 import RecorveryPassword from "@/views/Auth/RecorveryPassword.vue";
 import ChangePassword from "@/views/Auth/ChangePassword.vue";
 import NotAuthorizedView from "@/views/StatusPages/NotAuthorizedView.vue";
+import SeePublicVacancy from "@/views/Users/SeePublicVacancy.vue";
 
 import { AuthError, createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -35,6 +36,11 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/verVacantesPublico",
+      name: "publicVacancy",
+      component: SeePublicVacancy,
     },
     {
       path: "/acercadenosotros",
