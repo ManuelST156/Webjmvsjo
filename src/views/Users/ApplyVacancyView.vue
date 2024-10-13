@@ -1797,12 +1797,12 @@ const saveVacancy = async () => {
 
     
 
-    /* setTimeout(() => {
+    setTimeout(() => {
       loading.value = false;
       router.push({ path: "/vacantes" }).then(() => {
         window.location.reload();
       });
-    }, 3000); */
+    }, 3000); 
   } catch (error) {
     console.log(error);
     toast.add({
