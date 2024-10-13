@@ -2,7 +2,7 @@
   <Toast />
   <main>
     <div>
-      <h1>Vocalias</h1>
+      <h1>¡¡Aplicar a Vocalias!!</h1>
 
       <div class="ButtonLine">
         <router-link to="/aplicarVacante">
@@ -70,10 +70,28 @@
                       )
                     "
                   >
+
                     <div class="icon-wrapper">
                       <span class="material-symbols-outlined icon">delete</span>
                     </div>
                   </Button>
+
+                  <Button
+                        outlined
+                        rounded
+                        severity="warning"
+                        id="crudButton"
+                        class="mr-1"
+                        @click="
+                          downloadPDF(request.nombresSolicitante, request.apellidosSolicitante)
+                        "
+                      >
+                        <div class="icon-wrapper">
+                          <span class="material-symbols-outlined icon"
+                            >sim_card_download</span
+                          >
+                        </div>
+                      </Button>
                 </p>
               </div>
             </div>
@@ -312,6 +330,33 @@ const deleteRequest = async (id, codigo, vocalia) => {
     life: 3000,
   });
 };
+
+const downloadPDF= async(name,lastName)=>{
+    
+    var namePDF=`Solicitud de ${name} ${lastName}.pdf`;
+
+    console.log(namePDF);
+
+    const { data, error } = await supabase
+    .storage
+    .from('filePDF')
+    .download(namePDF);
+
+    console.log(data,error);
+
+    // Crear un objeto URL a partir del blob
+    const url = window.URL.createObjectURL(data);
+
+    // Crear un enlace para la descarga
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = namePDF; // Establecer el nombre del archivo que se descargará
+    document.body.appendChild(a);
+    a.click(); // Simular un clic en el enlace
+    a.remove(); // Eliminar el enlace del DOM
+    window.URL.revokeObjectURL(url); // Liberar la URL del objeto
+
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -358,8 +403,9 @@ const deleteRequest = async (id, codigo, vocalia) => {
 .Card {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 7px 11px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  border: 2px solid black;
 }
 
 .card-inner {
@@ -380,6 +426,7 @@ const deleteRequest = async (id, codigo, vocalia) => {
   height: 100%;
   object-fit: cover;
   border-radius: 5%;
+  border: 2px solid var(--darkblue);
 }
 
 .card-details {

@@ -1,5 +1,26 @@
 <template>
   <main>
+
+    <div class="more-about">
+        <h2>¿Qué quieres Saber de Nosotros?</h2>
+        <p class="optionLabel">Selecciona la informacion que deseas conocer de JMV:</p>
+        <div class="information-list">
+          <button @click="aboutUs" class="information-item">
+            Acerca de Nosotros
+          </button>
+          <button @click="logoDesign" class="information-item">
+            Logo de JMV
+          </button>
+          <button @click="members" class="information-item">Miembros</button>
+          <button @click="distinctiveNotes" class="information-item">
+            Notas Distintivas
+          </button>
+          <button @click="aboutCenter" class="information-item">
+            Acerca del Centro
+          </button>
+        </div>
+      </div>
+
     <div class="about-studio">
       <!--Acerca de Nosotros General-->
       <div class="about-section" v-if="dataShow == 'aboutUs'">
@@ -34,7 +55,7 @@
           <img
             src="@/assets/jmvLogo.jpg"
             alt="No Carga"
-            class="imageAboutException"
+            class="imageAbout"
           />
         </div>
 
@@ -118,7 +139,7 @@
           <img
             src="@/assets/distintiveNote.jpg"
             alt="No Carga"
-            class="imageAboutException"
+            class="imageAbout"
           />
         </div>
 
@@ -163,26 +184,6 @@
           </p>
         </div>
       </div>
-
-      <div class="more-about">
-        <h2>Más Sobre JMV</h2>
-        <p>Selecciona la informacion que deseas conocer de JMV:</p>
-        <div class="information-list">
-          <button @click="aboutUs" class="information-item">
-            Acerca de Nosotros
-          </button>
-          <button @click="logoDesign" class="information-item">
-            Logo de JMV
-          </button>
-          <button @click="members" class="information-item">Miembros</button>
-          <button @click="distinctiveNotes" class="information-item">
-            Notas Distintivas
-          </button>
-          <button @click="aboutCenter" class="information-item">
-            Acerca del Centro
-          </button>
-        </div>
-      </div>
     </div>
   </main>
 </template>
@@ -220,12 +221,7 @@ main {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 1) 0%,
-    var(--rblightblue) 35%,
-    rgba(221, 238, 255, 1) 100%
-  );
+  background: var(--rblightblue)
 }
 
 .about-section {
@@ -233,6 +229,7 @@ main {
   align-items: center;
   margin-bottom: 40px;
   flex-wrap: wrap;
+  
 }
 
 .about-image-container {
@@ -262,7 +259,7 @@ main {
   background: white;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .about-content h2 {
@@ -305,19 +302,20 @@ main {
   border-radius: 10px;
   border: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 120px;
+  width: 150px;
   text-align: center;
-  color: #333;
+  font-weight: bold;
+  color: rgb(0, 0, 35);
 }
 
 .information-item:hover {
-  background: var(--lightgrey);
-  color: #333;
+  background: var(--darkblue);
+  color: white;
 }
 
 .information-item:active {
   background: white;
-  color: #333;
+  color: rgb(0, 0, 35);
 }
 
 @media (max-width: 768px) {
@@ -331,13 +329,16 @@ main {
 
   .information-item {
     width: 100%;
+    font-weight: bold;
+    color: blue;
   }
 
   .imageAbout {
-  /* max-width: 100%; */
+  max-width: 100%;
   width: 400px;
   height: 400px;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -354,10 +355,15 @@ main {
   width: 400px;
   height: 400px;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 }
 
 li{
   padding: 3px;
+}
+
+.optionLabel{
+  font-weight: bold;
 }
 </style>

@@ -2,7 +2,16 @@
     <main>
       <Toast />
       <div>
-        <h1>Vocalias Aplicadas</h1>
+        <h1>¡¡Vocalias Aplicadas!!</h1>
+
+        <div class="filterButton">
+          <button @click="filterOn" class="button-item">
+            Vista Por Postulantes
+          </button>
+          <button @click="filterOff" class="button-item">
+            Vista por Vocalías
+          </button>
+        </div>
         <div class="containerCard">
           <Card
             class="Card"
@@ -42,7 +51,26 @@
                         </div>
                       </Button>
                     </router-link>
+
+                    <Button
+                        outlined
+                        rounded
+                        severity="warning"
+                        id="crudButton"
+                        class="mr-1"
+                        @click="
+                          downloadPDF(request.nombresSolicitante, request.apellidosSolicitante)
+                        "
+                      >
+                        <div class="icon-wrapper">
+                          <span class="material-symbols-outlined icon"
+                            >sim_card_download</span
+                          >
+                        </div>
+                      </Button>
                   </p>
+
+                  
                 </div>
               </div>
             </template>
@@ -61,6 +89,7 @@
   import { jwtDecode } from "jwt-decode";
   import { useRouter } from "vue-router";
   import { useToast } from "primevue/usetoast";
+  import jsPDF from 'jspdf';
   
   //========================================================
   //Variables de Supabase
@@ -96,6 +125,7 @@
       .select("*");
   
     listRequest.value = data;
+    console.log(listRequest.value);
   });
   
   //========================================================
@@ -107,6 +137,54 @@
   const seeRequest = (id) => {
     localStorage.setItem("isSeeing", id);
   };
+
+  const downloadPDF= async(name,lastName)=>{
+    
+    var namePDF=`Solicitud de ${name} ${lastName}.pdf`;
+
+    console.log(namePDF);
+
+    const { data, error } = await supabase
+    .storage
+    .from('filePDF')
+    .download(namePDF);
+
+    console.log(data,error);
+
+    // Crear un objeto URL a partir del blob
+    const url = window.URL.createObjectURL(data);
+
+    // Crear un enlace para la descarga
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = namePDF; // Establecer el nombre del archivo que se descargará
+    document.body.appendChild(a);
+    a.click(); // Simular un clic en el enlace
+    a.remove(); // Eliminar el enlace del DOM
+    window.URL.revokeObjectURL(url); // Liberar la URL del objeto
+
+  }
+
+  const filterOn=async ()=>{
+
+    listRequest.value=[];
+    const { data, error } = await supabase
+      .from("vistapreviasolicitudfiltro")
+      .select("*");
+
+    listRequest.value = data;
+    console.log(listRequest.value);
+  }
+
+const filterOff=async ()=>{
+  listRequest.value=[];
+  const { data, error } = await supabase
+    .from("vistapreviasolicitud")
+    .select("*");
+
+  listRequest.value = data;
+  console.log(listRequest.value);
+}
   </script>
   
   <style lang="scss" scoped>
@@ -153,8 +231,9 @@
   .Card {
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 7px 11px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    border: 2px solid black;
   }
   
   .card-inner {
@@ -175,6 +254,7 @@
     height: 100%;
     object-fit: cover;
     border-radius: 5%;
+    border: 2px solid var(--darkblue);
   }
   
   .card-details {
@@ -208,6 +288,36 @@
   .buttonVacancies {
     margin: 20px;
   }
+
+  .filterButton {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button-item {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  text-align: center;
+  font-weight: bold;
+  color: rgb(0, 0, 35);
+}
+
+.button-item:hover {
+  background: var(--darkblue);
+  color: white;
+}
+
+.button-item:active {
+  background: white;
+  color: rgb(0, 0, 35);
+}
   
   /* Media Queries */
   

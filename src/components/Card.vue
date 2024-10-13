@@ -6,9 +6,9 @@
   >
     <template #title>{{ message.tituloMensajeInicio }}</template>
     <template #content>
-      <p class="m-0">
+      <pre class="m-0">
         {{ message.descripcionMensajeInicio }}
-      </p>
+      </pre>
     </template>
   </Card>
 
@@ -116,6 +116,16 @@ const goToLink = (link) => {
 /* Card de Mensaje Inicial */
 .Card {
   margin: 20px;
+}
+
+pre{
+  white-space: pre-wrap !important; 
+  word-wrap: break-word !important; 
+  overflow-wrap: break-word !important;
+  text-indent: 0 !important; 
+  margin: 0 !important; 
+  padding: 0 !important;
+  text-align: left !important;
 }
 
 .Divider {

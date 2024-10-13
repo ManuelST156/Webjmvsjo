@@ -53,7 +53,7 @@
         to="/administrarInfoVistas"
         class="button"
       >
-        <span class="material-icons">layers</span>
+        <span class="material-icons">grid_view</span>
         <span class="text">Administrar Vistas</span>
       </router-link>
 
@@ -62,7 +62,7 @@
         to="/administrarPaginaInicio"
         class="button"
       >
-        <span class="material-icons">real_estate_agent</span>
+        <span class="material-icons">web</span>
         <span class="text">Administrar Pagina de Inicio</span>
       </router-link>
 
@@ -165,10 +165,9 @@ aside {
   flex-direction: column;
   width: calc(2rem + 32px);
   min-height: 100vh;
-  height: 110%;
+  height: auto;
   overflow: hidden;
   padding: 1rem;
-  border-radius: 0 0 20px 0 ;
 
   background-color: var(--superdarkblue);
   color: var(--light);
